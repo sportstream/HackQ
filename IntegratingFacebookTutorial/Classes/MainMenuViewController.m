@@ -9,6 +9,7 @@
 #import "MainMenuViewController.h"
 #import "RecordVideoViewController.h"
 #import "UserDetailsViewController.h"
+#import "UserTableViewController.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 
 @interface MainMenuViewController ()
@@ -40,11 +41,11 @@
     [self.view addSubview:self.tab.view];
 }
 
-
-
 - (IBAction)chatTap
 {
-    
+    UserTableViewController *r = [[UserTableViewController alloc] init];
+    [self.navigationController pushViewController:r animated:YES];
+    return;
 }
 
 - (IBAction)questionTap

@@ -38,15 +38,29 @@
         if (succeeded) {
             PFObject *video = [PFObject objectWithClassName:@"Video"];
             video[@"videoFile"] = videoFile;
+            [video setObject:[PFUser currentUser] forKey:@"user"];
             [video saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                [self.hud setLabelText:@"Saved!"];
-
-                self.hud.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkmark.png"]];
-                
-                // Set custom view mode
-                self.hud.mode = MBProgressHUDModeCustomView;
-                [self.hud hide:YES afterDelay:3];
-                
+                if (succeeded) {
+                    // update activity table
+                    PFObject *activityItem = [PFObject objectWithClassName:@"Activity"];
+                    [activityItem setObject:[PFUser currentUser] forKey:@"fromUser"];
+                    // TODO
+                    //[activityItem setObject:nil forKey:@"toUser"];
+                    [activityItem setObject:video forKey:@"video"];
+                    [activityItem setObject:@"question" forKey:@"type"];
+                    [activityItem setObject:@"video_question" forKey:@"content"];
+                    [activityItem saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                        if (succeeded) {
+                            [self.hud setLabelText:@"Saved!"];
+                            
+                            self.hud.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkmark.png"]];
+                            
+                            // Set custom view mode
+                            self.hud.mode = MBProgressHUDModeCustomView;
+                            [self.hud hide:YES afterDelay:3];
+                        }
+                    }];
+                }
             }];
         }
         else
