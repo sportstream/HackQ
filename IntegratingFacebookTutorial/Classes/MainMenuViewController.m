@@ -8,9 +8,11 @@
 
 #import "MainMenuViewController.h"
 #import "RecordVideoViewController.h"
+#import "UserDetailsViewController.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 
 @interface MainMenuViewController ()
+@property (nonatomic, retain) UITabBarController *tab;
 
 @end
 
@@ -21,6 +23,21 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationController.navigationBarHidden = YES;
+    self.tab=[[UITabBarController alloc]init];
+    
+    // FirstViewController
+    UserDetailsViewController *fvc=[[UserDetailsViewController alloc]initWithNibName:nil bundle:nil];
+    fvc.title=@"UserDetails";
+    fvc.tabBarItem.image=[UIImage imageNamed:@"bubbleIcon.png"];
+    
+    //SecondViewController
+    RecordVideoViewController *svc = [[RecordVideoViewController alloc] init];
+    svc.title=@"RecordVideo";
+    svc.tabBarItem.image=[UIImage imageNamed:@"questionMarkIcon.png"];
+    
+    self.tab.viewControllers=[NSArray arrayWithObjects:fvc, svc, nil];
+    
+    [self.view addSubview:self.tab.view];
 }
 
 
