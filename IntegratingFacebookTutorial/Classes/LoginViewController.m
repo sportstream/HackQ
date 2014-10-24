@@ -98,7 +98,7 @@
 //    UserDetailsViewController *detailsViewController = [[UserDetailsViewController alloc] initWithStyle:UITableViewStyleGrouped];
 //    [self.navigationController pushViewController:detailsViewController animated:animated];
     MainMenuViewController *m = [[MainMenuViewController alloc] init];
-    [self.navigationController pushViewController:m animated:YES];
+    [self.navigationController pushViewController:m animated:NO];
 }
 
 @end
