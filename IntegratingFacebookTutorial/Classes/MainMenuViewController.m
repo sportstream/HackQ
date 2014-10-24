@@ -32,7 +32,7 @@
     fvc.tabBarItem.image=[UIImage imageNamed:@"bubbleIcon.png"];
     
     //SecondViewController
-    RecordVideoViewController *svc = [[RecordVideoViewController alloc] init];
+    UserTableViewController *svc = [[UserTableViewController alloc] init];
     svc.title=@"RecordVideo";
     svc.tabBarItem.image=[UIImage imageNamed:@"questionMarkIcon.png"];
     

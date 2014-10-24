@@ -44,6 +44,7 @@
                     // update activity table
                     PFObject *activityItem = [PFObject objectWithClassName:@"Activity"];
                     [activityItem setObject:[PFUser currentUser] forKey:@"fromUser"];
+                    [activityItem setObject:self.toUser forKey:@"toUser"];
                     // TODO
                     //[activityItem setObject:nil forKey:@"toUser"];
                     [activityItem setObject:video forKey:@"video"];

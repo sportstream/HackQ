@@ -7,6 +7,7 @@
 //
 
 #import "UserTableViewController.h"
+#import "RecordVideoViewController.h"
 
 @interface UserTableViewController ()
 
@@ -20,6 +21,20 @@
         self.textKey = @"fullname";
     }
     return self;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    PFUser *selected = [self objectAtIndexPath:indexPath];
+    
+    RecordVideoViewController *r = [[RecordVideoViewController alloc] init];
+    [r setToUser:selected];
+    
+    // TODO
+    // CRASHES on iphone 5s ios 7
+    // but it loads fine on Iphone 6 simulator
+    
+    [self showDetailViewController:r sender:self];
 }
 
 - (void)viewDidLoad {
