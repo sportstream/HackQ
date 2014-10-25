@@ -30,11 +30,7 @@
     RecordVideoViewController *r = [[RecordVideoViewController alloc] init];
     [r setToUser:selected];
     
-    // TODO
-    // CRASHES on iphone 5s ios 7
-    // but it loads fine on Iphone 6 simulator
-    
-    [self showDetailViewController:r sender:self];
+    [self.navigationController pushViewController:r animated:YES];
 }
 
 - (void)viewDidLoad {

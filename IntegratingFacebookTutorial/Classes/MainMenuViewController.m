@@ -33,10 +33,13 @@
     
     //SecondViewController
     UserTableViewController *svc = [[UserTableViewController alloc] init];
+
+    UINavigationController *navigationController = [[UINavigationController alloc]
+                            initWithRootViewController:svc];
     svc.title=@"RecordVideo";
     svc.tabBarItem.image=[UIImage imageNamed:@"questionMarkIcon.png"];
     
-    self.tab.viewControllers=[NSArray arrayWithObjects:fvc, svc, nil];
+    self.tab.viewControllers=[NSArray arrayWithObjects:fvc, navigationController, nil];
     
     [self.view addSubview:self.tab.view];
 }
