@@ -25,6 +25,7 @@
 #import <ParseFacebookUtils/PFFacebookUtils.h>
 
 #import "LoginViewController.h"
+#import "MainMenuViewController.h"
 
 @implementation AppDelegate
 
@@ -46,8 +47,15 @@
     // ****************************************************************************
     [PFFacebookUtils initializeFacebook];
 
-    // Override point for customization after application launch.
-    self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:[[LoginViewController alloc] init]];
+    // Override point for customization after application launch
+    id vc;
+    if ([PFUser currentUser] && [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]]) {
+        vc = [[MainMenuViewController alloc] init];
+    }
+    else
+        vc = [[LoginViewController alloc] init];
+    
+    self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:vc];
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
 
