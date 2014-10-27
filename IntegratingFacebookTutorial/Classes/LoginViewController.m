@@ -45,11 +45,10 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+}
 
-    // Check if user is cached and linked to Facebook, if so, bypass login
-    if ([PFUser currentUser] && [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]]) {
-        [self _presentUserDetailsViewControllerAnimated:NO];
-    }
+- (void)viewDidLoad {
+    NSLog(@"login view did load.");
 }
 
 #pragma mark -
@@ -87,6 +86,14 @@
                             // Store the current user's Facebook ID on the user
                             [[PFUser currentUser] setObject:[result objectForKey:@"id"] forKey:@"fbId"];
                             [[PFUser currentUser] setObject:[result objectForKey:@"name"] forKey:@"fullname"];
+                            
+                            // save some additional non FB related column data
+                            // By default, a user is being created as a SuperFan
+                            // rs7LQMqj9t is the ID of SuperFan userRole
+                            PFObject *obj = [[PFObject alloc] initWithClassName:@"UserRoles"];
+                            [obj setObjectId:@"rs7LQMqj9t"];
+                            [[PFUser currentUser] setObject:obj forKey:@"userRole"];
+                            
                             [[PFUser currentUser] saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                                 if (succeeded) {
                                     [self _presentUserDetailsViewControllerAnimated:YES];
