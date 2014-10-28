@@ -10,6 +10,7 @@
 #import "RecordVideoViewController.h"
 #import "UserDetailsViewController.h"
 #import "UserTableViewController.h"
+#import "ActivityViewController.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 
 @interface MainMenuViewController ()
@@ -37,7 +38,15 @@
     svc.title=@"RecordVideo";
     svc.tabBarItem.image=[UIImage imageNamed:@"questionMarkIcon.png"];
     
-    self.tab.viewControllers=[NSArray arrayWithObjects:fvc, navigationController, nil];
+    //ThirdViewController
+    ActivityViewController *tvc = [[ActivityViewController alloc] init];
+    
+    UINavigationController *navigationController2 = [[UINavigationController alloc]
+                                                    initWithRootViewController:tvc];
+    tvc.title=@"Incoming";
+    tvc.tabBarItem.image=[UIImage imageNamed:@"questionMarkIcon.png"];
+    
+    self.tab.viewControllers=[NSArray arrayWithObjects:fvc, navigationController, navigationController2, nil];
     
     [self.view addSubview:self.tab.view];
 }
