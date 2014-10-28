@@ -19,8 +19,6 @@
 
 @implementation MainMenuViewController
 
-@synthesize chatButton, questionButton;
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationController.navigationBarHidden = YES;
@@ -42,20 +40,6 @@
     self.tab.viewControllers=[NSArray arrayWithObjects:fvc, navigationController, nil];
     
     [self.view addSubview:self.tab.view];
-}
-
-- (IBAction)chatTap
-{
-    UserTableViewController *r = [[UserTableViewController alloc] init];
-    [self.navigationController pushViewController:r animated:YES];
-    return;
-}
-
-- (IBAction)questionTap
-{
-    RecordVideoViewController *r = [[RecordVideoViewController alloc] init];
-    [self.navigationController pushViewController:r animated:YES];
-    return;
 }
 
 - (void)didReceiveMemoryWarning {

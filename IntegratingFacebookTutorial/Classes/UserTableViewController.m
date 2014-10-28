@@ -25,17 +25,23 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    PFUser *selected = [self objectAtIndexPath:indexPath];
+    PFUser *selected = (PFUser *)[self objectAtIndexPath:indexPath];
     
     RecordVideoViewController *r = [[RecordVideoViewController alloc] init];
     [r setToUser:selected];
-    
-    [self.navigationController pushViewController:r animated:YES];
+    self.navigationController.navigationBarHidden = YES;
+    [self.navigationController pushViewController:r animated:NO];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+}
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    self.navigationController.navigationBarHidden = NO;
 }
 
 - (void)didReceiveMemoryWarning {

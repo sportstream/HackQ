@@ -18,8 +18,8 @@
 @property MBProgressHUD *hud;
 @property UIImagePickerController *cameraUI;
 @property BOOL shootingVideo;
+@property float recordTime;
 @end
-
 
 @implementation RecordVideoViewController
 
@@ -31,7 +31,7 @@
 - (IBAction)saveTap
 {
     self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    [self.hud setLabelText:@"Saving"];
+    [self.hud setLabelText:@"Sending"];
     [self.hud setDimBackground:YES];
     PFFile *videoFile = [PFFile fileWithData:[NSData dataWithContentsOfURL:self.videoUrl]];
     [videoFile saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
@@ -52,7 +52,7 @@
                     [activityItem setObject:@"video_question" forKey:@"content"];
                     [activityItem saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                         if (succeeded) {
-                            [self.hud setLabelText:@"Saved!"];
+                            [self.hud setLabelText:@"Sent!"];
                             
                             self.hud.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkmark.png"]];
                             
@@ -87,9 +87,17 @@
 //    [self.view bringSubviewToFront:self.videoView];
 }
 
+-(IBAction)xTap
+{
+    [self showTabBar:self.tabBarController];
+    [self.navigationController popViewControllerAnimated:NO];
+}
+
+
 - (void)videoPlayBackDidFinish:(NSNotification *)notification
 {
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:MPMoviePlayerPlaybackDidFinishNotification object:nil];    
+    self.obscureView.hidden = YES;
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:MPMoviePlayerPlaybackDidFinishNotification object:nil];
     // Stop the video player and remove it from view
     [self.videoController stop];
     [self.videoController.view removeFromSuperview];
@@ -130,15 +138,29 @@
     overlayView.opaque=NO;
     overlayView.backgroundColor=[UIColor clearColor];
     
+    int recordButtonSize = 75;
     UIButton *recordButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    recordButton.frame = CGRectMake((self.view.frame.size.width-100)/2,self.view.frame.size.height-110,100,100);
-    [recordButton setImage:[UIImage imageNamed:@"recordVideoIcon"] forState:UIControlStateNormal];
+    recordButton.frame = CGRectMake((self.view.frame.size.width-recordButtonSize)/2,self.view.frame.size.height-recordButtonSize-10,recordButtonSize,recordButtonSize);
+    [recordButton setImage:[UIImage imageNamed:@"redButton"] forState:UIControlStateNormal];
     [recordButton addTarget:self action:@selector(shootVideo:) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIButton *backButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    backButton.frame = CGRectMake(10,20,30,30);
+    [backButton setImage:[UIImage imageNamed:@"leftArrowWhite"] forState:UIControlStateNormal];
+    [backButton addTarget:self action:@selector(backButtonTap:) forControlEvents:UIControlEventTouchUpInside];
+
+    int timeLabelWidth = 50;
+    UILabel *timeLabel = [UILabel new];
+    timeLabel.frame = CGRectMake(self.view.frame.size.width-timeLabelWidth-10,20,timeLabelWidth,30);
+    timeLabel.textColor = [UIColor whiteColor];
+    timeLabel.text = @"0";
     
     // parent view for our overlay
     UIView *cameraView=[[UIView alloc] initWithFrame:self.view.bounds];
     [cameraView addSubview:overlayView];
     [cameraView addSubview:recordButton];
+    [cameraView addSubview:backButton];
+    [cameraView addSubview:timeLabel];
     
     [_cameraUI setCameraOverlayView:cameraView];
     
@@ -147,6 +169,13 @@
     _cameraUI.delegate = self;
     
     [self presentViewController:_cameraUI animated:YES completion:nil];
+}
+
+-(void)backButtonTap:(id)sender
+{
+    self.navigationController.navigationBarHidden = NO;
+    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popToRootViewControllerAnimated:NO];
 }
 
 -(void) shootVideo:(id)sender
@@ -176,6 +205,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.obscureView.hidden = NO;
     [self showCamera];
 }
 
@@ -192,6 +222,7 @@
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
+    [self hideTabBar:self.tabBarController];
     [self dismissViewControllerAnimated:YES completion:nil];
     
     MPMoviePlayerController *theMovie = [[MPMoviePlayerController alloc] initWithContentURL:[info objectForKey:@"UIImagePickerControllerMediaURL"]];
@@ -201,16 +232,58 @@
     theMovie.scalingMode = MPMovieScalingModeAspectFit;
     self.imageView.image = [theMovie thumbnailImageAtTime:0 timeOption:MPMovieTimeOptionExact];
     self.videoUrl = [info objectForKey:@"UIImagePickerControllerMediaURL"];
+    [self playTap];
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void) hideTabBar:(UITabBarController *) tabbarcontroller
+{
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration:0.5];
+    float fHeight = screenRect.size.height;
+    if(  UIDeviceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation) )
+    {
+        fHeight = screenRect.size.width;
+    }
+    
+    for(UIView *view in tabbarcontroller.view.subviews)
+    {
+        if([view isKindOfClass:[UITabBar class]])
+        {
+            [view setFrame:CGRectMake(view.frame.origin.x, fHeight, view.frame.size.width, view.frame.size.height)];
+        }
+        else
+        {
+            [view setFrame:CGRectMake(view.frame.origin.x, view.frame.origin.y, view.frame.size.width, fHeight)];
+            view.backgroundColor = [UIColor blackColor];
+        }
+    }
+    [UIView commitAnimations];
 }
-*/
+
+
+- (void) showTabBar:(UITabBarController *) tabbarcontroller
+{
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    float fHeight = screenRect.size.height - tabbarcontroller.tabBar.frame.size.height;
+    
+    if(  UIDeviceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation) )
+    {
+        fHeight = screenRect.size.width - tabbarcontroller.tabBar.frame.size.height;
+    }
+    
+    for(UIView *view in tabbarcontroller.view.subviews)
+    {
+        if([view isKindOfClass:[UITabBar class]])
+        {
+            [view setFrame:CGRectMake(view.frame.origin.x, fHeight, view.frame.size.width, view.frame.size.height)];
+        }
+        else
+        {
+            [view setFrame:CGRectMake(view.frame.origin.x, view.frame.origin.y, view.frame.size.width, fHeight)];
+        }
+    }
+}
 
 @end

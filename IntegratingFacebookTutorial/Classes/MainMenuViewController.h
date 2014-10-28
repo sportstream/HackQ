@@ -10,11 +10,4 @@
 
 @interface MainMenuViewController : UIViewController <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
-
-@property (nonatomic, retain) IBOutlet UIButton *chatButton;
-@property (nonatomic, retain) IBOutlet UIButton *questionButton;
-
-- (IBAction)chatTap;
-- (IBAction)questionTap;
-
 @end

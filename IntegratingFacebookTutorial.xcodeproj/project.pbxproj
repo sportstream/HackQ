@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		0FCAF50F19F6C24D00BB4BCE /* MainMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FCAF50D19F6C24D00BB4BCE /* MainMenuViewController.m */; };
 		0FCAF51019F6C24D00BB4BCE /* MainMenuViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0FCAF50E19F6C24D00BB4BCE /* MainMenuViewController.xib */; };
-		0FCAF51319F6C2C300BB4BCE /* questionIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0FCAF51119F6C2C300BB4BCE /* questionIcon@2x.png */; };
 		0FD4BD0A19F6E6F700F7BBD0 /* RecordVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FD4BD0819F6E6F700F7BBD0 /* RecordVideoViewController.m */; };
 		0FD4BD0B19F6E6F700F7BBD0 /* RecordVideoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0FD4BD0919F6E6F700F7BBD0 /* RecordVideoViewController.xib */; };
 		0FD4BD0D19F6EC3700F7BBD0 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FD4BD0C19F6EC3700F7BBD0 /* MediaPlayer.framework */; };
@@ -18,9 +17,12 @@
 		0FD4BD1319F7008100F7BBD0 /* playIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0FD4BD1219F7008100F7BBD0 /* playIcon@2x.png */; };
 		0FD4BD1719F70F7800F7BBD0 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FD4BD1619F70F7800F7BBD0 /* MBProgressHUD.m */; };
 		0FD4BD1919F7170200F7BBD0 /* checkmark@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0FD4BD1819F7170200F7BBD0 /* checkmark@2x.png */; };
-		0FD4BD1B19F88C5600F7BBD0 /* recordVideoIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0FD4BD1A19F88C5600F7BBD0 /* recordVideoIcon@2x.png */; };
 		0FD4BD1D19FAE8E900F7BBD0 /* questionMarkIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 0FD4BD1C19FAE8E900F7BBD0 /* questionMarkIcon.png */; };
 		0FD4BD1F19FAE90C00F7BBD0 /* bubbleIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 0FD4BD1E19FAE90C00F7BBD0 /* bubbleIcon.png */; };
+		0FD4BD2119FF01B200F7BBD0 /* redButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0FD4BD2019FF01B200F7BBD0 /* redButton@2x.png */; };
+		0FD4BD2519FF045900F7BBD0 /* leftArrowWhite.png in Resources */ = {isa = PBXBuildFile; fileRef = 0FD4BD2419FF045900F7BBD0 /* leftArrowWhite.png */; };
+		0FD4BD2919FF0EC700F7BBD0 /* refreshIconWhite@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0FD4BD2819FF0EC700F7BBD0 /* refreshIconWhite@2x.png */; };
+		0FD4BD2D19FF0FAF00F7BBD0 /* xButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0FD4BD2C19FF0FAF00F7BBD0 /* xButton@2x.png */; };
 		30C949AC1829561000B17666 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30C949AB1829561000B17666 /* FacebookSDK.framework */; };
 		6D10F48316DD68E000690A0F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D10F48216DD68E000690A0F /* CoreLocation.framework */; };
 		8103BCCD19AD1F8900BCF4C7 /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8103BCCB19AD1F8900BCF4C7 /* Bolts.framework */; };
@@ -60,7 +62,6 @@
 		0FCAF50C19F6C24D00BB4BCE /* MainMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainMenuViewController.h; sourceTree = "<group>"; };
 		0FCAF50D19F6C24D00BB4BCE /* MainMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainMenuViewController.m; sourceTree = "<group>"; };
 		0FCAF50E19F6C24D00BB4BCE /* MainMenuViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainMenuViewController.xib; path = ../Classes/MainMenuViewController.xib; sourceTree = "<group>"; };
-		0FCAF51119F6C2C300BB4BCE /* questionIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "questionIcon@2x.png"; sourceTree = "<group>"; };
 		0FD4BD0719F6E6F700F7BBD0 /* RecordVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecordVideoViewController.h; sourceTree = "<group>"; };
 		0FD4BD0819F6E6F700F7BBD0 /* RecordVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecordVideoViewController.m; sourceTree = "<group>"; };
 		0FD4BD0919F6E6F700F7BBD0 /* RecordVideoViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = RecordVideoViewController.xib; path = ../Classes/RecordVideoViewController.xib; sourceTree = "<group>"; };
@@ -71,9 +72,12 @@
 		0FD4BD1519F70F7800F7BBD0 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
 		0FD4BD1619F70F7800F7BBD0 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
 		0FD4BD1819F7170200F7BBD0 /* checkmark@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkmark@2x.png"; sourceTree = "<group>"; };
-		0FD4BD1A19F88C5600F7BBD0 /* recordVideoIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "recordVideoIcon@2x.png"; sourceTree = "<group>"; };
 		0FD4BD1C19FAE8E900F7BBD0 /* questionMarkIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = questionMarkIcon.png; sourceTree = "<group>"; };
 		0FD4BD1E19FAE90C00F7BBD0 /* bubbleIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bubbleIcon.png; sourceTree = "<group>"; };
+		0FD4BD2019FF01B200F7BBD0 /* redButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "redButton@2x.png"; sourceTree = "<group>"; };
+		0FD4BD2419FF045900F7BBD0 /* leftArrowWhite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = leftArrowWhite.png; sourceTree = "<group>"; };
+		0FD4BD2819FF0EC700F7BBD0 /* refreshIconWhite@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "refreshIconWhite@2x.png"; sourceTree = "<group>"; };
+		0FD4BD2C19FF0FAF00F7BBD0 /* xButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "xButton@2x.png"; sourceTree = "<group>"; };
 		30C949AB1829561000B17666 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
 		6D10F48216DD68E000690A0F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		8103BCCB19AD1F8900BCF4C7 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bolts.framework; sourceTree = "<group>"; };
@@ -186,8 +190,6 @@
 		8103BCD219AD217900BCF4C7 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				8D53028B19FB108F004281FA /* UserTableViewController.h */,
-				8D53028C19FB108F004281FA /* UserTableViewController.m */,
 				0FD4BD1419F70F7800F7BBD0 /* MBProgressHUD */,
 				8103BCD319AD217900BCF4C7 /* AppDelegate.h */,
 				8103BCD419AD217900BCF4C7 /* AppDelegate.m */,
@@ -197,6 +199,8 @@
 				8103BCD819AD217900BCF4C7 /* UserDetailsViewController.m */,
 				0FCAF50C19F6C24D00BB4BCE /* MainMenuViewController.h */,
 				0FCAF50D19F6C24D00BB4BCE /* MainMenuViewController.m */,
+				8D53028B19FB108F004281FA /* UserTableViewController.h */,
+				8D53028C19FB108F004281FA /* UserTableViewController.m */,
 				0FD4BD0719F6E6F700F7BBD0 /* RecordVideoViewController.h */,
 				0FD4BD0819F6E6F700F7BBD0 /* RecordVideoViewController.m */,
 			);
@@ -211,15 +215,17 @@
 				0FCAF50E19F6C24D00BB4BCE /* MainMenuViewController.xib */,
 				8103BCE919AD217900BCF4C7 /* LoginViewController.xib */,
 				8103BCEA19AD217900BCF4C7 /* TableHeaderView.xib */,
+				0FD4BD2419FF045900F7BBD0 /* leftArrowWhite.png */,
+				0FD4BD2019FF01B200F7BBD0 /* redButton@2x.png */,
 				0FD4BD1E19FAE90C00F7BBD0 /* bubbleIcon.png */,
 				0FD4BD1C19FAE8E900F7BBD0 /* questionMarkIcon.png */,
-				0FD4BD1A19F88C5600F7BBD0 /* recordVideoIcon@2x.png */,
 				0FD4BD1819F7170200F7BBD0 /* checkmark@2x.png */,
 				0FD4BD1219F7008100F7BBD0 /* playIcon@2x.png */,
+				0FD4BD2819FF0EC700F7BBD0 /* refreshIconWhite@2x.png */,
 				0FD4BD0E19F6FE8200F7BBD0 /* refreshIcon@2x.png */,
 				0FD4BD0F19F6FE8200F7BBD0 /* saveIcon@2x.png */,
-				0FCAF51119F6C2C300BB4BCE /* questionIcon@2x.png */,
 				8103BCDE19AD217900BCF4C7 /* Default-568h@2x.png */,
+				0FD4BD2C19FF0FAF00F7BBD0 /* xButton@2x.png */,
 				8103BCDF19AD217900BCF4C7 /* Default.png */,
 				8103BCE019AD217900BCF4C7 /* Default@2x.png */,
 				8103BCE319AD217900BCF4C7 /* Icon.png */,
@@ -336,20 +342,22 @@
 				0FD4BD0B19F6E6F700F7BBD0 /* RecordVideoViewController.xib in Resources */,
 				0FD4BD1019F6FE8200F7BBD0 /* refreshIcon@2x.png in Resources */,
 				8103BCF219AD217900BCF4C7 /* Default@2x.png in Resources */,
+				0FD4BD2D19FF0FAF00F7BBD0 /* xButton@2x.png in Resources */,
 				8103BCF619AD217900BCF4C7 /* login-button-small-pressed.png in Resources */,
 				8103BCFA19AD217900BCF4C7 /* LoginViewController.xib in Resources */,
 				8103BCF919AD217900BCF4C7 /* login-button-small@2x.png in Resources */,
 				8103BCF119AD217900BCF4C7 /* Default.png in Resources */,
+				0FD4BD2519FF045900F7BBD0 /* leftArrowWhite.png in Resources */,
+				0FD4BD2119FF01B200F7BBD0 /* redButton@2x.png in Resources */,
 				8103BCF719AD217900BCF4C7 /* login-button-small-pressed@2x.png in Resources */,
 				8103BCFB19AD217900BCF4C7 /* TableHeaderView.xib in Resources */,
 				8103BCF019AD217900BCF4C7 /* Default-568h@2x.png in Resources */,
 				0FD4BD1919F7170200F7BBD0 /* checkmark@2x.png in Resources */,
-				0FCAF51319F6C2C300BB4BCE /* questionIcon@2x.png in Resources */,
 				0FD4BD1319F7008100F7BBD0 /* playIcon@2x.png in Resources */,
 				0FD4BD1F19FAE90C00F7BBD0 /* bubbleIcon.png in Resources */,
-				0FD4BD1B19F88C5600F7BBD0 /* recordVideoIcon@2x.png in Resources */,
 				8103BCF519AD217900BCF4C7 /* Icon@2x.png in Resources */,
 				0FD4BD1119F6FE8200F7BBD0 /* saveIcon@2x.png in Resources */,
+				0FD4BD2919FF0EC700F7BBD0 /* refreshIconWhite@2x.png in Resources */,
 				8103BCF819AD217900BCF4C7 /* login-button-small.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
