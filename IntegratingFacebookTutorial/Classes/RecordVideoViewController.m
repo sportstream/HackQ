@@ -50,6 +50,8 @@
                     [activityItem setObject:video forKey:@"video"];
                     [activityItem setObject:@"question" forKey:@"type"];
                     [activityItem setObject:@"video_question" forKey:@"content"];
+                    [activityItem setObject:NO forKey:@"replied"];
+                    [activityItem setObject:NO forKey:@"seen"];
                     [activityItem saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                         if (succeeded) {
                             [self.hud setLabelText:@"Sent!"];

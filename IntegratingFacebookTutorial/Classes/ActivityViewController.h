@@ -8,6 +8,6 @@
 
 #import <Parse/Parse.h>
 
-@interface ActivityViewController : PFQueryTableViewController
+@interface ActivityViewController : PFQueryTableViewController <UINavigationControllerDelegate>
 
 @end

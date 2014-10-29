@@ -15,6 +15,8 @@
 
 @property MPMoviePlayerViewController *videoViewController;
 
+@property MBProgressHUD *hud;
+
 @end
 
 @implementation ActivityViewController
@@ -22,7 +24,6 @@
 - (id)init {
     if (self = [super initWithClassName:@"Activity"]) {
         // Initialization code
-        self.textKey = @"fromUser";
     }
     return self;
 }
@@ -31,6 +32,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    [self.navigationController setDelegate:self];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -39,8 +41,17 @@
     
     PFObject *videoObject = [selected objectForKey:@"video"];
     PFFile *videoFile = [videoObject objectForKey:@"videoFile"];
+    
+    self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    [self.hud setLabelText:@"Loading"];
+    [self.hud setDimBackground:YES];
+    
     [videoFile getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
         if (error == nil) {
+            // Set custom view mode
+            self.hud.mode = MBProgressHUDModeCustomView;
+            [self.hud hide:NO];
+            
             [self playVideo:data];
         }
     }];
@@ -58,8 +69,10 @@
     MPMoviePlayerViewController *mpvc = [[MPMoviePlayerViewController alloc] initWithContentURL:url];
     self.videoViewController = mpvc;
     
+
     MPMoviePlayerController *videoController = [mpvc moviePlayer];
-    [videoController setFullscreen:YES];
+    videoController.fullscreen = YES;
+    videoController.shouldAutoplay = NO;
     videoController.scalingMode = MPMovieScalingModeAspectFit;
     videoController.controlStyle = MPMovieControlStyleNone;
     
@@ -69,15 +82,15 @@
                                              selector:@selector(videoPlayBackDidFinish:)
                                                  name:MPMoviePlayerPlaybackDidFinishNotification
                                                object:videoController];
-    [videoController play];
 }
 
 - (void)videoPlayBackDidFinish:(NSNotification *)notification
 {
     [[NSNotificationCenter defaultCenter]removeObserver:self name:MPMoviePlayerPlaybackDidFinishNotification object:nil];
     // Stop the video player and remove it from view
-    //[self.videoViewController.moviePlayer stop];
+    [self.videoViewController.moviePlayer stop];
     [self.videoViewController dismissMoviePlayerViewControllerAnimated];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (PFTableViewCell *)tableView:(UITableView *)tableView
@@ -86,13 +99,36 @@
     static NSString *identifier = @"Cell";
     PFTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     if (!cell) {
-        cell = [[PFTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        cell = [[PFTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
     }
-    cell.textLabel.text = object[@"fromUser"][@"fullname"];
     
+    UIFont *font;
+    if ([object[@"seen"] boolValue])
+        font = [UIFont fontWithName:@"HelveticaNeue-Light" size:14];
+    else
+        font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:14];
+    
+    NSString *titleStringPrefix;
+    NSString *objectType = object[@"type"];
+    if ([objectType isEqualToString:@"question"])
+        titleStringPrefix = @"A Question From ";
+    else if ([objectType isEqualToString:@"answer"])
+        titleStringPrefix = @"An Answer From ";
+    
+    NSString *titleString = [titleStringPrefix stringByAppendingString:object[@"fromUser"][@"fullname"]];
+    
+    NSAttributedString *labelText = [[NSAttributedString alloc] initWithString:titleString attributes: @{ NSFontAttributeName : font }];
+    
+    cell.textLabel.attributedText = labelText;
+    cell.detailTextLabel.text = [self getLocalizedStringForDate:[object createdAt]];
     
     return cell;
-    
+}
+
+- (NSString *)getLocalizedStringForDate:(NSDate *)date {
+    // TODO
+    // show the date in a better format
+    return [date descriptionWithLocale:[NSLocale systemLocale]];
 }
 
 - (PFQuery *)queryForTable {
@@ -103,7 +139,29 @@
     [query includeKey:@"video"];
     [query whereKey:@"toUser" equalTo:currentUser];
     
+//    NSSortDescriptor *aDescriptor = [[NSSortDescriptor alloc] initWithKey:@"replied" ascending:YES];
+//    NSSortDescriptor *bDateDescriptor = [[NSSortDescriptor alloc] initWithKey:@"createdAt" ascending:NO];
+//    NSArray *sortDescriptors = @[aDescriptor, bDateDescriptor];
+//    [query orderBySortDescriptors:sortDescriptors];
+    
+    
+    [query orderByAscending:@"replied"];
+    [query addDescendingOrder:@"createdAt"];
+    
+
+    
     return query;
+}
+
+
+#pragma mark - UINavigationControllerDelegate
+
+- (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
+    if ([viewController isKindOfClass:[MPMoviePlayerViewController class]]) {
+        MPMoviePlayerViewController *v = (MPMoviePlayerViewController *)viewController;
+        [[v moviePlayer] play];
+        
+    }
 }
 
 - (void)didReceiveMemoryWarning {

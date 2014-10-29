@@ -26,27 +26,21 @@
     self.tab=[[UITabBarController alloc]init];
     
     // FirstViewController
-    UserDetailsViewController *fvc=[[UserDetailsViewController alloc]initWithNibName:nil bundle:nil];
-    fvc.title=@"UserDetails";
+    ActivityViewController *fvc = [[ActivityViewController alloc] init];
+    UINavigationController *firstNavigationController = [[UINavigationController alloc]
+                                                     initWithRootViewController:fvc];
+    fvc.title=@"Inbox";
     fvc.tabBarItem.image=[UIImage imageNamed:@"bubbleIcon.png"];
     
     //SecondViewController
     UserTableViewController *svc = [[UserTableViewController alloc] init];
 
-    UINavigationController *navigationController = [[UINavigationController alloc]
+    UINavigationController *secondNavigationController = [[UINavigationController alloc]
                             initWithRootViewController:svc];
-    svc.title=@"RecordVideo";
+    svc.title=@"Record Video";
     svc.tabBarItem.image=[UIImage imageNamed:@"questionMarkIcon.png"];
     
-    //ThirdViewController
-    ActivityViewController *tvc = [[ActivityViewController alloc] init];
-    
-    UINavigationController *navigationController2 = [[UINavigationController alloc]
-                                                    initWithRootViewController:tvc];
-    tvc.title=@"Incoming";
-    tvc.tabBarItem.image=[UIImage imageNamed:@"questionMarkIcon.png"];
-    
-    self.tab.viewControllers=[NSArray arrayWithObjects:fvc, navigationController, navigationController2, nil];
+    self.tab.viewControllers=[NSArray arrayWithObjects:firstNavigationController, secondNavigationController, nil];
     
     [self.view addSubview:self.tab.view];
 }
