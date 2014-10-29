@@ -45,6 +45,7 @@
 		8103BD0C19AD21C300BCF4C7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8103BD0719AD21C300BCF4C7 /* InfoPlist.strings */; };
 		8103BD0E19AD21C300BCF4C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8103BD0B19AD21C300BCF4C7 /* main.m */; };
 		8D53028D19FB108F004281FA /* UserTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D53028C19FB108F004281FA /* UserTableViewController.m */; };
+		8DFC40FB1A002151001CABFF /* ActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DFC40FA1A002151001CABFF /* ActivityViewController.m */; };
 		C425016D161BBAE400474BCD /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4250169161BBAE400474BCD /* StoreKit.framework */; };
 		C4250170161BBAEE00474BCD /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C425016F161BBAEE00474BCD /* libz.dylib */; };
 		D4DA79EF14D3345A0055F672 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4DA79EE14D3345A0055F672 /* UIKit.framework */; };
@@ -106,6 +107,8 @@
 		8103BD0B19AD21C300BCF4C7 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		8D53028B19FB108F004281FA /* UserTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserTableViewController.h; sourceTree = "<group>"; };
 		8D53028C19FB108F004281FA /* UserTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserTableViewController.m; sourceTree = "<group>"; };
+		8DFC40F91A002151001CABFF /* ActivityViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActivityViewController.h; sourceTree = "<group>"; };
+		8DFC40FA1A002151001CABFF /* ActivityViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActivityViewController.m; sourceTree = "<group>"; };
 		C4250169161BBAE400474BCD /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		C425016F161BBAEE00474BCD /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		D4DA79EA14D3345A0055F672 /* IntegratingFacebookTutorial.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IntegratingFacebookTutorial.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -190,6 +193,8 @@
 		8103BCD219AD217900BCF4C7 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				8DFC40F91A002151001CABFF /* ActivityViewController.h */,
+				8DFC40FA1A002151001CABFF /* ActivityViewController.m */,
 				0FD4BD1419F70F7800F7BBD0 /* MBProgressHUD */,
 				8103BCD319AD217900BCF4C7 /* AppDelegate.h */,
 				8103BCD419AD217900BCF4C7 /* AppDelegate.m */,
@@ -376,6 +381,7 @@
 				8103BCEB19AD217900BCF4C7 /* AppDelegate.m in Sources */,
 				0FCAF50F19F6C24D00BB4BCE /* MainMenuViewController.m in Sources */,
 				0FD4BD0A19F6E6F700F7BBD0 /* RecordVideoViewController.m in Sources */,
+				8DFC40FB1A002151001CABFF /* ActivityViewController.m in Sources */,
 				0FD4BD1719F70F7800F7BBD0 /* MBProgressHUD.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
