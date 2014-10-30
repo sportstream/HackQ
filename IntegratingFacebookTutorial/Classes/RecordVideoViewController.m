@@ -10,6 +10,7 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <MediaPlayer/MediaPlayer.h>
 #import "MBProgressHUD.h"
+#import "NotificationHelper.h"
 
 @interface RecordVideoViewController ()
 
@@ -19,13 +20,63 @@
 @property UIImagePickerController *cameraUI;
 @property BOOL shootingVideo;
 @property float recordTime;
+@property RecordViewMode mode;
+@property PFObject *activityObject;
 @end
 
 @implementation RecordVideoViewController
 
+- (id)initWithMode:(RecordViewMode)mode withRecipient:(PFUser *)toUser {
+    if (self = [super initWithNibName:@"RecordVideoViewController" bundle:nil]) {
+        // Initialization code
+        self.mode = mode;
+        self.toUser = toUser;
+    }
+    return self;
+}
+
+- (id)initWithMode:(RecordViewMode)mode withRecipient:(PFUser *)toUser withActivityObject:(PFObject *)activityObject {
+    if (self = [self initWithMode:mode withRecipient:toUser]) {
+        // Initialization code
+        self.activityObject = activityObject;
+    }
+    return self;
+}
+
 - (IBAction)redoTap
 {
     [self showCamera];
+}
+
+- (PFObject*)initializeActivityClassItem {
+    PFObject *video;
+    
+    PFObject *activityItem = [PFObject objectWithClassName:@"Activity"];
+    [activityItem setObject:[PFUser currentUser] forKey:@"fromUser"];
+    [activityItem setObject:self.toUser forKey:@"toUser"];
+    
+    [activityItem setObject:[NSNumber numberWithBool:NO] forKey:@"replied"];
+    [activityItem setObject:[NSNumber numberWithBool:NO] forKey:@"seen"];
+    switch (self.mode) {
+        case RecordViewModeQuestion:
+            [activityItem setObject:@"question" forKey:@"type"];
+            [activityItem setObject:@"video_question" forKey:@"content"];
+            break;
+        case RecordViewModeAnswer:
+            video = [[self activityObject] objectForKey:@"video"];
+            [activityItem setObject:video forKey:@"answerTo"];
+            [activityItem setObject:@"answer" forKey:@"type"];
+            [activityItem setObject:@"video_answer" forKey:@"content"];
+            break;
+        default:
+            break;
+    }
+    return activityItem;
+}
+
+- (void)updateRepliedValue:(NSNumber *)value {
+    [self.activityObject setObject:value forKey:@"replied"];
+    [self.activityObject save];
 }
 
 - (IBAction)saveTap
@@ -41,19 +92,24 @@
             [video setObject:[PFUser currentUser] forKey:@"user"];
             [video saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                 if (succeeded) {
-                    // update activity table
-                    PFObject *activityItem = [PFObject objectWithClassName:@"Activity"];
-                    [activityItem setObject:[PFUser currentUser] forKey:@"fromUser"];
-                    [activityItem setObject:self.toUser forKey:@"toUser"];
-                    // TODO
-                    //[activityItem setObject:nil forKey:@"toUser"];
+                    // prepare activity class object
+                    PFObject *activityItem = [self initializeActivityClassItem];
                     [activityItem setObject:video forKey:@"video"];
-                    [activityItem setObject:@"question" forKey:@"type"];
-                    [activityItem setObject:@"video_question" forKey:@"content"];
-                    [activityItem setObject:NO forKey:@"replied"];
-                    [activityItem setObject:NO forKey:@"seen"];
+                    
+                    // update activity table
                     [activityItem saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                         if (succeeded) {
+                            if (self.mode == RecordViewModeAnswer) {
+                                // original video object's property replied value should be updated to TRUE.
+                                // fire the event
+                                NSDictionary *userInfo = @{
+                                                           @"value" : [NSNumber numberWithBool:YES],
+                                                           @"key" : @"replied"
+                                                           };
+                                [NotificationHelper pushNotification:NotificationUpdateActivityClassItem
+                                                          WithObject:userInfo];
+                            }
+                            
                             [self.hud setLabelText:@"Sent!"];
                             
                             self.hud.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkmark.png"]];
@@ -61,6 +117,11 @@
                             // Set custom view mode
                             self.hud.mode = MBProgressHUDModeCustomView;
                             [self.hud hide:YES afterDelay:3];
+                            
+                            //[self dismissViewControllerAnimated:YES completion:nil];
+                            [self showTabBar:self.tabBarController];
+                            [self.navigationController setNavigationBarHidden:NO];
+                            [self.navigationController popViewControllerAnimated:YES];
                         }
                     }];
                 }
