@@ -7,7 +7,9 @@
 //
 
 #import <Parse/Parse.h>
+#import "NotificationDelegate.h"
+#import "NotificationHelper.h"
 
-@interface ActivityViewController : PFQueryTableViewController <UINavigationControllerDelegate>
+@interface ActivityViewController : PFQueryTableViewController <UINavigationControllerDelegate, NotificationDelegate>
 
 @end

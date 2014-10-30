@@ -45,6 +45,7 @@
 		8103BD0C19AD21C300BCF4C7 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8103BD0719AD21C300BCF4C7 /* InfoPlist.strings */; };
 		8103BD0E19AD21C300BCF4C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8103BD0B19AD21C300BCF4C7 /* main.m */; };
 		8D53028D19FB108F004281FA /* UserTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D53028C19FB108F004281FA /* UserTableViewController.m */; };
+		8D5AC6661A0174B6002F35EC /* NotificationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D5AC6651A0174B6002F35EC /* NotificationHelper.m */; };
 		8DFC40FB1A002151001CABFF /* ActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DFC40FA1A002151001CABFF /* ActivityViewController.m */; };
 		C425016D161BBAE400474BCD /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4250169161BBAE400474BCD /* StoreKit.framework */; };
 		C4250170161BBAEE00474BCD /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C425016F161BBAEE00474BCD /* libz.dylib */; };
@@ -107,6 +108,9 @@
 		8103BD0B19AD21C300BCF4C7 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		8D53028B19FB108F004281FA /* UserTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserTableViewController.h; sourceTree = "<group>"; };
 		8D53028C19FB108F004281FA /* UserTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserTableViewController.m; sourceTree = "<group>"; };
+		8D5AC6641A0174B6002F35EC /* NotificationHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationHelper.h; sourceTree = "<group>"; };
+		8D5AC6651A0174B6002F35EC /* NotificationHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotificationHelper.m; sourceTree = "<group>"; };
+		8D5AC6671A017765002F35EC /* NotificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationDelegate.h; sourceTree = "<group>"; };
 		8DFC40F91A002151001CABFF /* ActivityViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActivityViewController.h; sourceTree = "<group>"; };
 		8DFC40FA1A002151001CABFF /* ActivityViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActivityViewController.m; sourceTree = "<group>"; };
 		C4250169161BBAE400474BCD /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
@@ -193,6 +197,7 @@
 		8103BCD219AD217900BCF4C7 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				8D5AC6681A01B7D5002F35EC /* Helpers */,
 				8DFC40F91A002151001CABFF /* ActivityViewController.h */,
 				8DFC40FA1A002151001CABFF /* ActivityViewController.m */,
 				0FD4BD1419F70F7800F7BBD0 /* MBProgressHUD */,
@@ -256,6 +261,16 @@
 			path = "IntegratingFacebookTutorial/Supporting Files";
 			sourceTree = "<group>";
 		};
+		8D5AC6681A01B7D5002F35EC /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				8D5AC6641A0174B6002F35EC /* NotificationHelper.h */,
+				8D5AC6651A0174B6002F35EC /* NotificationHelper.m */,
+				8D5AC6671A017765002F35EC /* NotificationDelegate.h */,
+			);
+			name = Helpers;
+			sourceTree = "<group>";
+		};
 		D4DA79DF14D3345A0055F672 = {
 			isa = PBXGroup;
 			children = (
@@ -314,7 +329,7 @@
 				LastUpgradeCheck = 0610;
 				TargetAttributes = {
 					D4DA79E914D3345A0055F672 = {
-						DevelopmentTeam = YLV379QM22;
+						DevelopmentTeam = V9WTTPBFK9;
 					};
 				};
 			};
@@ -374,6 +389,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8D5AC6661A0174B6002F35EC /* NotificationHelper.m in Sources */,
 				8103BCED19AD217900BCF4C7 /* UserDetailsViewController.m in Sources */,
 				8103BCEC19AD217900BCF4C7 /* LoginViewController.m in Sources */,
 				8D53028D19FB108F004281FA /* UserTableViewController.m in Sources */,

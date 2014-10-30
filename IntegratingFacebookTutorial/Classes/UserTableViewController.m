@@ -27,8 +27,7 @@
 {
     PFUser *selected = (PFUser *)[self objectAtIndexPath:indexPath];
     
-    RecordVideoViewController *r = [[RecordVideoViewController alloc] init];
-    [r setToUser:selected];
+    RecordVideoViewController *r = [[RecordVideoViewController alloc] initWithMode:RecordViewModeQuestion withRecipient:selected];
     self.navigationController.navigationBarHidden = YES;
     [self.navigationController pushViewController:r animated:NO];
 }

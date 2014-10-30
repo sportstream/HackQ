@@ -10,12 +10,19 @@
 
 @interface RecordVideoViewController : UIViewController <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
+typedef NS_ENUM(NSInteger, RecordViewMode) {
+    RecordViewModeQuestion,
+    RecordViewModeAnswer
+};
+
 @property (nonatomic, retain) IBOutlet UIImageView *imageView;
 @property (nonatomic, retain) IBOutlet UIView *videoView;
 @property (nonatomic, retain) IBOutlet UIView *obscureView;
 @property (nonatomic, retain) IBOutlet UIButton *playButton;
 @property (nonatomic, retain) PFUser *toUser;
 
+- (id)initWithMode:(RecordViewMode)mode withRecipient:(PFUser *)toUser;
+- (id)initWithMode:(RecordViewMode)mode withRecipient:(PFUser *)toUser withActivityObject:(PFObject *)activityObject;
 - (IBAction)redoTap;
 - (IBAction)saveTap;
 - (IBAction)playTap;
