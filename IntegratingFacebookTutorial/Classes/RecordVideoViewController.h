@@ -22,7 +22,7 @@ typedef NS_ENUM(NSInteger, RecordViewMode) {
 @property (nonatomic, retain) PFUser *toUser;
 
 - (id)initWithMode:(RecordViewMode)mode withRecipient:(PFUser *)toUser;
-- (id)initWithMode:(RecordViewMode)mode withRecipient:(PFUser *)toUser withActivityObject:(PFObject *)activityObject;
+- (id)initWithMode:(RecordViewMode)mode withRecipient:(PFUser *)toUser withActivityObject:(PFObject *)activityObject withQuestionVideoUrl:(NSURL *)questionVideoUrl;
 - (IBAction)redoTap;
 - (IBAction)saveTap;
 - (IBAction)playTap;
