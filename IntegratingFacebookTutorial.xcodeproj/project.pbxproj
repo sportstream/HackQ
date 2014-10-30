@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0F5F7D121A01FB0D00483FA2 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5F7D111A01FB0D00483FA2 /* AVFoundation.framework */; };
+		0F5F7D141A01FB1700483FA2 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5F7D131A01FB1700483FA2 /* AssetsLibrary.framework */; };
+		0F5F7D161A01FB1F00483FA2 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5F7D151A01FB1F00483FA2 /* CoreMedia.framework */; };
 		0FCAF50F19F6C24D00BB4BCE /* MainMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FCAF50D19F6C24D00BB4BCE /* MainMenuViewController.m */; };
 		0FCAF51019F6C24D00BB4BCE /* MainMenuViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0FCAF50E19F6C24D00BB4BCE /* MainMenuViewController.xib */; };
 		0FD4BD0A19F6E6F700F7BBD0 /* RecordVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FD4BD0819F6E6F700F7BBD0 /* RecordVideoViewController.m */; };
@@ -61,6 +64,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0F5F7D111A01FB0D00483FA2 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		0F5F7D131A01FB1700483FA2 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		0F5F7D151A01FB1F00483FA2 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		0FCAF50C19F6C24D00BB4BCE /* MainMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainMenuViewController.h; sourceTree = "<group>"; };
 		0FCAF50D19F6C24D00BB4BCE /* MainMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainMenuViewController.m; sourceTree = "<group>"; };
 		0FCAF50E19F6C24D00BB4BCE /* MainMenuViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainMenuViewController.xib; path = ../Classes/MainMenuViewController.xib; sourceTree = "<group>"; };
@@ -133,6 +139,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				0FD4BD0D19F6EC3700F7BBD0 /* MediaPlayer.framework in Frameworks */,
+				0F5F7D161A01FB1F00483FA2 /* CoreMedia.framework in Frameworks */,
+				0F5F7D141A01FB1700483FA2 /* AssetsLibrary.framework in Frameworks */,
+				0F5F7D121A01FB0D00483FA2 /* AVFoundation.framework in Frameworks */,
 				8103BCCD19AD1F8900BCF4C7 /* Bolts.framework in Frameworks */,
 				C425016D161BBAE400474BCD /* StoreKit.framework in Frameworks */,
 				6D10F48316DD68E000690A0F /* CoreLocation.framework in Frameworks */,
@@ -293,6 +302,9 @@
 		D4DA79ED14D3345A0055F672 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0F5F7D151A01FB1F00483FA2 /* CoreMedia.framework */,
+				0F5F7D131A01FB1700483FA2 /* AssetsLibrary.framework */,
+				0F5F7D111A01FB0D00483FA2 /* AVFoundation.framework */,
 				0FD4BD0C19F6EC3700F7BBD0 /* MediaPlayer.framework */,
 				8103BCD119AD1F9E00BCF4C7 /* User Frameworks */,
 				8103BCCA19AD1EF000BCF4C7 /* System Frameworks */,
@@ -329,7 +341,7 @@
 				LastUpgradeCheck = 0610;
 				TargetAttributes = {
 					D4DA79E914D3345A0055F672 = {
-						DevelopmentTeam = V9WTTPBFK9;
+						DevelopmentTeam = YLV379QM22;
 					};
 				};
 			};

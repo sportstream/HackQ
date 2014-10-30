@@ -10,42 +10,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "IntegratingFacebookTutorial/Classes/RecordVideoViewController.m"
-            timestampString = "435873303.013121"
+            timestampString = "436341683.469832"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "170"
-            endingLineNumber = "170"
-            landmarkName = "-didReceiveMemoryWarning"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "IntegratingFacebookTutorial/Classes/RecordVideoViewController.m"
-            timestampString = "435873303.013121"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "216"
-            endingLineNumber = "216">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "IntegratingFacebookTutorial/Classes/RecordVideoViewController.m"
-            timestampString = "435719139.82146"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "38"
-            endingLineNumber = "38"
-            landmarkName = "-saveTap"
+            startingLineNumber = "406"
+            endingLineNumber = "406"
+            landmarkName = "-exportDidFinish:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -56,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "IntegratingFacebookTutorial/Classes/RecordVideoViewController.m"
-            timestampString = "435719139.82146"
+            timestampString = "436341683.469832"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "43"
-            endingLineNumber = "43"
+            startingLineNumber = "206"
+            endingLineNumber = "206"
             landmarkName = "-saveTap"
             landmarkType = "5">
          </BreakpointContent>

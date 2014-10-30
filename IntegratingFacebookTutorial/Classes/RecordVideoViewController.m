@@ -11,6 +11,7 @@
 #import <MediaPlayer/MediaPlayer.h>
 #import "MBProgressHUD.h"
 #import "NotificationHelper.h"
+#import <AssetsLibrary/AssetsLibrary.h>
 
 @interface RecordVideoViewController ()
 
@@ -22,6 +23,9 @@
 @property float recordTime;
 @property RecordViewMode mode;
 @property PFObject *activityObject;
+@property NSTimer *timeTimer;
+@property UILabel *timeLabel;
+@property NSURL *questionVideoUrl;
 @end
 
 @implementation RecordVideoViewController
@@ -35,17 +39,13 @@
     return self;
 }
 
-- (id)initWithMode:(RecordViewMode)mode withRecipient:(PFUser *)toUser withActivityObject:(PFObject *)activityObject {
+- (id)initWithMode:(RecordViewMode)mode withRecipient:(PFUser *)toUser withActivityObject:(PFObject *)activityObject withQuestionVideoUrl:(NSURL *)questionVideoUrl {
     if (self = [self initWithMode:mode withRecipient:toUser]) {
+        self.questionVideoUrl = questionVideoUrl;
         // Initialization code
         self.activityObject = activityObject;
     }
     return self;
-}
-
-- (IBAction)redoTap
-{
-    [self showCamera];
 }
 
 - (PFObject*)initializeActivityClassItem {
@@ -79,8 +79,131 @@
     [self.activityObject save];
 }
 
+-(void)showCamera
+{
+    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] == NO) {
+        return;
+    }
+    
+    _cameraUI = [[UIImagePickerController alloc] init];
+    
+    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]
+        && [[UIImagePickerController availableMediaTypesForSourceType:
+             UIImagePickerControllerSourceTypeCamera] containsObject:(NSString *)kUTTypeMovie]) {
+        
+        _cameraUI.mediaTypes = [NSArray arrayWithObject:(NSString *) kUTTypeMovie];
+        _cameraUI.sourceType = UIImagePickerControllerSourceTypeCamera;
+        
+        if ([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront]) {
+            _cameraUI.cameraDevice = UIImagePickerControllerCameraDeviceFront;
+        } else if ([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear]) {
+            _cameraUI.cameraDevice = UIImagePickerControllerCameraDeviceRear;
+        }
+        
+    } else {
+        return;
+    }
+    
+    // create the overlay view
+    UIView *overlayView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    
+    // important - it needs to be transparent so the camera preview shows through!
+    overlayView.opaque=NO;
+    overlayView.backgroundColor=[UIColor clearColor];
+    
+    int recordButtonSize = 75;
+    UIButton *recordButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    recordButton.frame = CGRectMake((self.view.frame.size.width-recordButtonSize)/2,self.view.frame.size.height-recordButtonSize-10,recordButtonSize,recordButtonSize);
+    [recordButton setImage:[UIImage imageNamed:@"redButton"] forState:UIControlStateNormal];
+    [recordButton addTarget:self action:@selector(shootVideo:) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIButton *backButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    backButton.frame = CGRectMake(10,20,30,30);
+    [backButton setImage:[UIImage imageNamed:@"leftArrowWhite"] forState:UIControlStateNormal];
+    [backButton addTarget:self action:@selector(backButtonTap:) forControlEvents:UIControlEventTouchUpInside];
+
+    int timeLabelWidth = 50;
+    _timeLabel = [UILabel new];
+    self.timeLabel.frame = CGRectMake(self.view.frame.size.width-timeLabelWidth-10,20,timeLabelWidth,30);
+    self.timeLabel.textColor = [UIColor whiteColor];
+    self.timeLabel.text = @"0";
+    
+    // parent view for our overlay
+    UIView *cameraView=[[UIView alloc] initWithFrame:self.view.bounds];
+    [cameraView addSubview:overlayView];
+    [cameraView addSubview:recordButton];
+    [cameraView addSubview:backButton];
+    [cameraView addSubview:_timeLabel];
+    
+    [_cameraUI setCameraOverlayView:cameraView];
+    
+    _cameraUI.allowsEditing = NO;
+    _cameraUI.showsCameraControls = NO;
+    _cameraUI.delegate = self;
+    
+    [self presentViewController:_cameraUI animated:YES completion:nil];
+}
+
+#pragma mark - shoot video buttons
+
+-(void)backButtonTap:(id)sender
+{
+    self.navigationController.navigationBarHidden = NO;
+    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popToRootViewControllerAnimated:NO];
+}
+
+-(void)shootVideo:(id)sender
+{
+    UIButton *recordButton = (UIButton *)sender;
+    if (self.shootingVideo == YES)
+    {
+        if (self.timeTimer != nil)
+        {
+            [self.timeTimer invalidate];
+            self.timeTimer = nil;
+        }
+        self.shootingVideo = NO;
+        [_cameraUI stopVideoCapture];
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            [recordButton setHighlighted:NO];
+        }];
+    }
+    else
+    {
+        self.timeTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(timeTimerFired) userInfo:nil repeats:YES];
+        self.shootingVideo = YES;
+        [_cameraUI startVideoCapture];
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+            [recordButton setHighlighted:YES];
+        }];
+    }
+}
+
+-(IBAction)xTap
+{
+    [self showTabBar:self.tabBarController];
+    [self.navigationController popViewControllerAnimated:NO];
+}
+
+-(void)timeTimerFired
+{
+    _recordTime += .1;
+    _timeLabel.text = [NSString stringWithFormat:@"%f",floorf(_recordTime)];
+}
+
+#pragma mark - review video buttons
+
+- (IBAction)redoTap
+{
+    [self showCamera];
+}
+
 - (IBAction)saveTap
 {
+    [self videoConcat:^(NSURL *concatVideoUrl) {
+        NSLog(@"%@",concatVideoUrl);
+    }];
     self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     [self.hud setLabelText:@"Sending"];
     [self.hud setDimBackground:YES];
@@ -118,44 +241,25 @@
                             self.hud.mode = MBProgressHUDModeCustomView;
                             [self.hud hide:YES afterDelay:3];
                             
-                            //[self dismissViewControllerAnimated:YES completion:nil];
-                            [self showTabBar:self.tabBarController];
-                            [self.navigationController setNavigationBarHidden:NO];
-                            [self.navigationController popViewControllerAnimated:YES];
+//                            [self xTap];
+                            
+                            [self videoConcat:^(NSURL *concatVideoUrl) {
+                                [self playVideo:concatVideoUrl];
+                            }];
                         }
                     }];
                 }
             }];
         }
         else
-            [MBProgressHUD hideHUDForView:self.view animated:YES];
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
     }];
 }
 
 -(IBAction)playTap
 {
-    _videoController = [[MPMoviePlayerController alloc] init];
-    [self.videoController setContentURL:self.videoUrl];
-    [self.videoController.view setFrame:self.imageView.frame];
-//    [self.videoController.view setFrame:[[UIScreen mainScreen] bounds]];
-//    [self.videoController setFullscreen:YES];
-    self.videoController.scalingMode = MPMovieScalingModeAspectFit;
-    self.videoController.controlStyle = MPMovieControlStyleNone;
-    [self.view addSubview:self.videoController.view];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(videoPlayBackDidFinish:)
-                                                 name:MPMoviePlayerPlaybackDidFinishNotification
-                                               object:self.videoController];
-    [self.videoController play];
-//    [self.view bringSubviewToFront:self.videoView];
+    [self playVideo:self.videoUrl];
 }
-
--(IBAction)xTap
-{
-    [self showTabBar:self.tabBarController];
-    [self.navigationController popViewControllerAnimated:NO];
-}
-
 
 - (void)videoPlayBackDidFinish:(NSNotification *)notification
 {
@@ -165,116 +269,6 @@
     [self.videoController stop];
     [self.videoController.view removeFromSuperview];
     self.videoController = nil;
-}
-
-
--(void)showCamera
-{
-    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] == NO) {
-        return;
-    }
-    
-    _cameraUI = [[UIImagePickerController alloc] init];
-    
-    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]
-        && [[UIImagePickerController availableMediaTypesForSourceType:
-             UIImagePickerControllerSourceTypeCamera] containsObject:(NSString *)kUTTypeMovie]) {
-        
-        _cameraUI.mediaTypes = [NSArray arrayWithObject:(NSString *) kUTTypeMovie];
-        _cameraUI.sourceType = UIImagePickerControllerSourceTypeCamera;
-        
-        if ([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceFront]) {
-            _cameraUI.cameraDevice = UIImagePickerControllerCameraDeviceFront;
-        } else if ([UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear]) {
-            _cameraUI.cameraDevice = UIImagePickerControllerCameraDeviceRear;
-        }
-        
-    } else {
-        return;
-    }
-    
-    
-    // create the overlay view
-    UIView *overlayView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-    
-    // important - it needs to be transparent so the camera preview shows through!
-    overlayView.opaque=NO;
-    overlayView.backgroundColor=[UIColor clearColor];
-    
-    int recordButtonSize = 75;
-    UIButton *recordButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    recordButton.frame = CGRectMake((self.view.frame.size.width-recordButtonSize)/2,self.view.frame.size.height-recordButtonSize-10,recordButtonSize,recordButtonSize);
-    [recordButton setImage:[UIImage imageNamed:@"redButton"] forState:UIControlStateNormal];
-    [recordButton addTarget:self action:@selector(shootVideo:) forControlEvents:UIControlEventTouchUpInside];
-    
-    UIButton *backButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    backButton.frame = CGRectMake(10,20,30,30);
-    [backButton setImage:[UIImage imageNamed:@"leftArrowWhite"] forState:UIControlStateNormal];
-    [backButton addTarget:self action:@selector(backButtonTap:) forControlEvents:UIControlEventTouchUpInside];
-
-    int timeLabelWidth = 50;
-    UILabel *timeLabel = [UILabel new];
-    timeLabel.frame = CGRectMake(self.view.frame.size.width-timeLabelWidth-10,20,timeLabelWidth,30);
-    timeLabel.textColor = [UIColor whiteColor];
-    timeLabel.text = @"0";
-    
-    // parent view for our overlay
-    UIView *cameraView=[[UIView alloc] initWithFrame:self.view.bounds];
-    [cameraView addSubview:overlayView];
-    [cameraView addSubview:recordButton];
-    [cameraView addSubview:backButton];
-    [cameraView addSubview:timeLabel];
-    
-    [_cameraUI setCameraOverlayView:cameraView];
-    
-    _cameraUI.allowsEditing = NO;
-    _cameraUI.showsCameraControls = NO;
-    _cameraUI.delegate = self;
-    
-    [self presentViewController:_cameraUI animated:YES completion:nil];
-}
-
--(void)backButtonTap:(id)sender
-{
-    self.navigationController.navigationBarHidden = NO;
-    [self dismissViewControllerAnimated:YES completion:nil];
-    [self.navigationController popToRootViewControllerAnimated:NO];
-}
-
--(void) shootVideo:(id)sender
-{
-    UIButton *recordButton = (UIButton *)sender;
-    if (self.shootingVideo == YES)
-    {
-        self.shootingVideo = NO;
-        [_cameraUI stopVideoCapture];
-        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-            [recordButton setHighlighted:NO];
-        }];
-    }
-    else
-    {
-        self.shootingVideo = YES;
-        [_cameraUI startVideoCapture];
-        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-            [recordButton setHighlighted:YES];
-        }];
-    }
-}
-
-- (void)cancelPicture {
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.obscureView.hidden = NO;
-    [self showCamera];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 #pragma mark - UIImagePickerDelegate
@@ -297,6 +291,8 @@
     self.videoUrl = [info objectForKey:@"UIImagePickerControllerMediaURL"];
     [self playTap];
 }
+
+#pragma mark - tab bar methods
 
 - (void) hideTabBar:(UITabBarController *) tabbarcontroller
 {
@@ -325,13 +321,12 @@
     [UIView commitAnimations];
 }
 
-
 - (void) showTabBar:(UITabBarController *) tabbarcontroller
 {
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     float fHeight = screenRect.size.height - tabbarcontroller.tabBar.frame.size.height;
     
-    if(  UIDeviceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation) )
+    if(UIDeviceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation))
     {
         fHeight = screenRect.size.width - tabbarcontroller.tabBar.frame.size.height;
     }
@@ -347,6 +342,108 @@
             [view setFrame:CGRectMake(view.frame.origin.x, view.frame.origin.y, view.frame.size.width, fHeight)];
         }
     }
+}
+
+#pragma mark -
+-(void)videoConcat:(void (^) (NSURL *concatVideoUrl)) block
+{
+    AVURLAsset *question = [AVURLAsset URLAssetWithURL:self.questionVideoUrl options:nil];
+    AVURLAsset *answer = [AVURLAsset URLAssetWithURL:self.videoUrl options:nil];
+    
+    AVMutableComposition* mixComposition = [[AVMutableComposition alloc] init];
+    AVMutableCompositionTrack *firstTrack = [mixComposition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
+    AVMutableCompositionTrack *firstTrackAudio = [mixComposition addMutableTrackWithMediaType:AVMediaTypeAudio
+                                                                             preferredTrackID:kCMPersistentTrackID_Invalid];
+    firstTrack.preferredTransform = CGAffineTransformMakeRotation(M_PI/2);
+    
+    [firstTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, question.duration) ofTrack:[[question tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0] atTime:kCMTimeZero error:nil];
+    [firstTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, answer.duration) ofTrack:[[answer tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0] atTime:question.duration error:nil];
+
+    if ([[question tracksWithMediaType:AVMediaTypeAudio] count] > 0)
+    {
+        AVAssetTrack *clipAudioTrack = [[question tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
+        [firstTrackAudio insertTimeRange:CMTimeRangeMake(kCMTimeZero, question.duration) ofTrack:clipAudioTrack atTime:kCMTimeZero error:nil];
+    }
+    
+    if ([[answer tracksWithMediaType:AVMediaTypeAudio] count] > 0)
+    {
+        AVAssetTrack *clipAudioTrack = [[answer tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
+        [firstTrackAudio insertTimeRange:CMTimeRangeMake(kCMTimeZero, answer.duration) ofTrack:clipAudioTrack atTime:question.duration error:nil];
+    }
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *myPathDocs =  [documentsDirectory stringByAppendingPathComponent:
+                             [NSString stringWithFormat:@"mergeVideo-%d.mov",arc4random() % 1000]];
+    NSURL *url = [NSURL fileURLWithPath:myPathDocs];
+    // 5 - Create exporter
+    AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:mixComposition
+                                                                      presetName:AVAssetExportPresetHighestQuality];
+    exporter.outputURL=url;
+    exporter.outputFileType = AVFileTypeQuickTimeMovie;
+    exporter.shouldOptimizeForNetworkUse = YES;
+    [exporter exportAsynchronouslyWithCompletionHandler:^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+//            [self exportDidFinish:exporter];
+            block(exporter.outputURL);
+        });
+    }];
+}
+
+-(void)exportDidFinish:(AVAssetExportSession*)session
+{
+    if (session.status == AVAssetExportSessionStatusCompleted) {
+        NSURL *outputURL = session.outputURL;
+        ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+        if ([library videoAtPathIsCompatibleWithSavedPhotosAlbum:outputURL]) {
+            [library writeVideoAtPathToSavedPhotosAlbum:outputURL completionBlock:^(NSURL *assetURL, NSError *error){
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (error) {
+                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Video Saving Failed"
+                                                                       delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                        [alert show];
+                    } else {
+                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Video Saved" message:@"Saved To Photo Album"
+                                                                       delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                        [alert show];
+                    }
+                });
+            }];
+        }
+    }
+}
+
+#pragma mark - play video
+
+-(void)playVideo:(NSURL *)url
+{
+    _videoController = [[MPMoviePlayerController alloc] init];
+    [self.videoController setContentURL:url];
+    [self.videoController.view setFrame:self.imageView.frame];
+    //    [self.videoController.view setFrame:[[UIScreen mainScreen] bounds]];
+    //    [self.videoController setFullscreen:YES];
+    self.videoController.scalingMode = MPMovieScalingModeAspectFit;
+    self.videoController.controlStyle = MPMovieControlStyleNone;
+    [self.view addSubview:self.videoController.view];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(videoPlayBackDidFinish:)
+                                                 name:MPMoviePlayerPlaybackDidFinishNotification
+                                               object:self.videoController];
+    [self.videoController play];
+
+}
+
+#pragma mark -
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.obscureView.hidden = NO;
+    [self showCamera];
+}
+
+- (void)didReceiveMemoryWarnivifnbugtfritiubkbetlktfivilhtdfnjnifiegngclhnbejtbddbrfevderfiheirkvvdlrigtulcfincbehbidtuubdjejljgeccfegbhgbjjvjtntfjnefufllifkng {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
 }
 
 @end

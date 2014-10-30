@@ -18,7 +18,7 @@
 @property UIButton *playButton;
 @property UIButton *replyButton;
 @property PFObject *selectedActivityItem;
-
+@property NSURL *currentVideoUrl;
 @property MBProgressHUD *hud;
 
 @end
@@ -67,7 +67,7 @@
         return;
     }
     PFUser *toUser = (PFUser *)[self.selectedActivityItem objectForKey:@"fromUser"];
-    RecordVideoViewController *r = [[RecordVideoViewController alloc] initWithMode:RecordViewModeAnswer withRecipient:toUser withActivityObject:self.selectedActivityItem];
+    RecordVideoViewController *r = [[RecordVideoViewController alloc] initWithMode:RecordViewModeAnswer withRecipient:toUser withActivityObject:self.selectedActivityItem withQuestionVideoUrl:self.currentVideoUrl];
     self.navigationController.navigationBarHidden = YES;
     [self.navigationController pushViewController:r animated:YES];
 }
@@ -160,12 +160,12 @@
 {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *appFile = [documentsDirectory stringByAppendingPathComponent:@"MyFile.m4v"];
+    NSString *appFile = [documentsDirectory stringByAppendingPathComponent:@"MyFile.mov"];
     [data writeToFile:appFile atomically:YES];
     //and then into NSURL.
-    NSURL *url = [NSURL fileURLWithPath:appFile];
+    self.currentVideoUrl = [NSURL fileURLWithPath:appFile];
     
-    MPMoviePlayerViewController *mpvc = [[MPMoviePlayerViewController alloc] initWithContentURL:url];
+    MPMoviePlayerViewController *mpvc = [[MPMoviePlayerViewController alloc] initWithContentURL:self.currentVideoUrl];
     self.videoViewController = mpvc;
     
     self.playButton = [self createPlayButton];
