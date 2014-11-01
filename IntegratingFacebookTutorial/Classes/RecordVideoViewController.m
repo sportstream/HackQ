@@ -26,7 +26,10 @@
 @property NSTimer *timeTimer;
 @property UILabel *timeLabel;
 @property NSURL *questionVideoUrl;
+@property __block NSURL *concatVideoURL;
 @end
+
+typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *concatVideo);
 
 @implementation RecordVideoViewController
 
@@ -207,6 +210,8 @@
     self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     [self.hud setLabelText:@"Sending"];
     [self.hud setDimBackground:YES];
+    
+    // upload new recorded video
     PFFile *videoFile = [PFFile fileWithData:[NSData dataWithContentsOfURL:self.videoUrl]];
     [videoFile saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         if (succeeded) {
@@ -214,25 +219,17 @@
             video[@"videoFile"] = videoFile;
             [video setObject:[PFUser currentUser] forKey:@"user"];
             [video saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                if (succeeded) {
+                
+                 VideosUploadedBooleanResultBlock callbackBlock = ^(PFObject *video, PFObject *concatVideo) {
                     // prepare activity class object
                     PFObject *activityItem = [self initializeActivityClassItem];
                     [activityItem setObject:video forKey:@"video"];
+                    if (concatVideo != nil)
+                        [activityItem setObject:concatVideo forKey:@"stitchedVideo"];
                     
                     // update activity table
                     [activityItem saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                         if (succeeded) {
-                            if (self.mode == RecordViewModeAnswer) {
-                                // original video object's property replied value should be updated to TRUE.
-                                // fire the event
-                                NSDictionary *userInfo = @{
-                                                           @"value" : [NSNumber numberWithBool:YES],
-                                                           @"key" : @"replied"
-                                                           };
-                                [NotificationHelper pushNotification:NotificationUpdateActivityClassItem
-                                                          WithObject:userInfo];
-                            }
-                            
                             [self.hud setLabelText:@"Sent!"];
                             
                             self.hud.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkmark.png"]];
@@ -240,14 +237,66 @@
                             // Set custom view mode
                             self.hud.mode = MBProgressHUDModeCustomView;
                             [self.hud hide:YES afterDelay:3];
+                            if (self.mode == RecordViewModeAnswer) {
+                                // original video activity object's property replied value should be updated to TRUE.
+                                // fire the event
+                                NSDictionary *userInfo = @{
+                                                           @"value" : [NSNumber numberWithBool:YES],
+                                                           @"key" : @"replied"
+                                                           };
+                                [NotificationHelper pushNotification:NotificationUpdateActivityClassItem
+                                                          WithObject:userInfo];
+                                
+                                // original video activity object's property stitchedVideo value should be updated accordingly.
+                                // fire the event
+                                NSDictionary *userInfoNext = @{
+                                                           @"value" : concatVideo,
+                                                           @"key" : @"stitchedVideo"
+                                                           };
+                                [NotificationHelper pushNotification:NotificationUpdateActivityClassItem
+                                                          WithObject:userInfoNext];
+                                
+                                [self playVideo:self.concatVideoURL];
+                            }
+                            //                            [self xTap];
                             
-//                            [self xTap];
-                            
-                            [self videoConcat:^(NSURL *concatVideoUrl) {
-                                [self playVideo:concatVideoUrl];
-                            }];
                         }
                     }];
+                };
+                
+                if (succeeded) {
+                    if (self.mode == RecordViewModeAnswer) {
+                        // concat two videos and
+                        // upload concatinated video
+                        [self videoConcat:^(NSURL *concatVideoUrl) {
+                            // save the reference
+                            self.concatVideoURL = concatVideoUrl;
+                            
+                            // upload the video
+                            PFFile *concatVideoFile = [PFFile fileWithData:[NSData dataWithContentsOfURL:concatVideoUrl]];
+                            [concatVideoFile saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                                if (succeeded) {
+                                    PFObject *concatVideo = [PFObject objectWithClassName:@"Video"];
+                                    concatVideo[@"videoFile"] = concatVideoFile;
+                                    [concatVideo saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                                        if (succeeded) {
+                                            dispatch_async(dispatch_get_main_queue(), ^{
+                                                callbackBlock(video, concatVideo);
+                                            });
+                                        }
+                                    }];
+                                }
+                            }];
+                            
+                        }];
+
+                    }
+                    else if (self.mode == RecordViewModeQuestion) {
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            callbackBlock(video, nil);
+                        });
+                    }
+                    
                 }
             }];
         }
@@ -258,7 +307,10 @@
 
 -(IBAction)playTap
 {
-    [self playVideo:self.videoUrl];
+    if (self.concatVideoURL != nil)
+        [self playVideo:self.concatVideoURL];
+    else
+        [self playVideo:self.videoUrl];
 }
 
 - (void)videoPlayBackDidFinish:(NSNotification *)notification
