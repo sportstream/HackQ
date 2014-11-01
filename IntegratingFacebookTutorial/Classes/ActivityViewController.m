@@ -137,6 +137,11 @@
     return query;
 }
 
+- (BOOL)canBeReplied {
+    NSString *type = [self.selectedActivityItem objectForKey:@"type"];
+    return [type isEqualToString:@"question"];
+}
+
 - (BOOL)isSelectedQuestionRepliedBefore {
     NSNumber *isReplied = [self.selectedActivityItem objectForKey:@"replied"];
     return [isReplied boolValue];
@@ -189,7 +194,9 @@
 - (void)videoPlayBackDidFinish:(NSNotification *)notification
 {
     [self showPlayButton];
-    [self showReplyButton];
+    
+    if ([self canBeReplied])
+        [self showReplyButton];
     
     [[NSNotificationCenter defaultCenter]removeObserver:self name:MPMoviePlayerPlaybackDidFinishNotification object:nil];
     // Stop the video player and remove it from view
