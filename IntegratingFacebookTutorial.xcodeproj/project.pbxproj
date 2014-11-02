@@ -49,6 +49,8 @@
 		8103BD0E19AD21C300BCF4C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8103BD0B19AD21C300BCF4C7 /* main.m */; };
 		8D53028D19FB108F004281FA /* UserTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D53028C19FB108F004281FA /* UserTableViewController.m */; };
 		8D5AC6661A0174B6002F35EC /* NotificationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8D5AC6651A0174B6002F35EC /* NotificationHelper.m */; };
+		8DA9CA4F1A0598CE00187C25 /* HackVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DA9CA4E1A0598CE00187C25 /* HackVideoPlayer.m */; };
+		8DA9CA531A059FF200187C25 /* PFActivityObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DA9CA521A059FF200187C25 /* PFActivityObject.m */; };
 		8DFC40FB1A002151001CABFF /* ActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8DFC40FA1A002151001CABFF /* ActivityViewController.m */; };
 		C425016D161BBAE400474BCD /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4250169161BBAE400474BCD /* StoreKit.framework */; };
 		C4250170161BBAEE00474BCD /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C425016F161BBAEE00474BCD /* libz.dylib */; };
@@ -117,6 +119,10 @@
 		8D5AC6641A0174B6002F35EC /* NotificationHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationHelper.h; sourceTree = "<group>"; };
 		8D5AC6651A0174B6002F35EC /* NotificationHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotificationHelper.m; sourceTree = "<group>"; };
 		8D5AC6671A017765002F35EC /* NotificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationDelegate.h; sourceTree = "<group>"; };
+		8DA9CA4D1A0598CE00187C25 /* HackVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HackVideoPlayer.h; sourceTree = "<group>"; };
+		8DA9CA4E1A0598CE00187C25 /* HackVideoPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HackVideoPlayer.m; sourceTree = "<group>"; };
+		8DA9CA511A059FF200187C25 /* PFActivityObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PFActivityObject.h; sourceTree = "<group>"; };
+		8DA9CA521A059FF200187C25 /* PFActivityObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PFActivityObject.m; sourceTree = "<group>"; };
 		8DFC40F91A002151001CABFF /* ActivityViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActivityViewController.h; sourceTree = "<group>"; };
 		8DFC40FA1A002151001CABFF /* ActivityViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActivityViewController.m; sourceTree = "<group>"; };
 		C4250169161BBAE400474BCD /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
@@ -206,6 +212,7 @@
 		8103BCD219AD217900BCF4C7 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				8DA9CA501A059EE800187C25 /* Categories */,
 				8D5AC6681A01B7D5002F35EC /* Helpers */,
 				8DFC40F91A002151001CABFF /* ActivityViewController.h */,
 				8DFC40FA1A002151001CABFF /* ActivityViewController.m */,
@@ -222,6 +229,8 @@
 				8D53028C19FB108F004281FA /* UserTableViewController.m */,
 				0FD4BD0719F6E6F700F7BBD0 /* RecordVideoViewController.h */,
 				0FD4BD0819F6E6F700F7BBD0 /* RecordVideoViewController.m */,
+				8DA9CA4D1A0598CE00187C25 /* HackVideoPlayer.h */,
+				8DA9CA4E1A0598CE00187C25 /* HackVideoPlayer.m */,
 			);
 			name = Classes;
 			path = IntegratingFacebookTutorial/Classes;
@@ -278,6 +287,15 @@
 				8D5AC6671A017765002F35EC /* NotificationDelegate.h */,
 			);
 			name = Helpers;
+			sourceTree = "<group>";
+		};
+		8DA9CA501A059EE800187C25 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				8DA9CA511A059FF200187C25 /* PFActivityObject.h */,
+				8DA9CA521A059FF200187C25 /* PFActivityObject.m */,
+			);
+			name = Categories;
 			sourceTree = "<group>";
 		};
 		D4DA79DF14D3345A0055F672 = {
@@ -408,9 +426,11 @@
 				8103BD0E19AD21C300BCF4C7 /* main.m in Sources */,
 				8103BCEB19AD217900BCF4C7 /* AppDelegate.m in Sources */,
 				0FCAF50F19F6C24D00BB4BCE /* MainMenuViewController.m in Sources */,
+				8DA9CA4F1A0598CE00187C25 /* HackVideoPlayer.m in Sources */,
 				0FD4BD0A19F6E6F700F7BBD0 /* RecordVideoViewController.m in Sources */,
 				8DFC40FB1A002151001CABFF /* ActivityViewController.m in Sources */,
 				0FD4BD1719F70F7800F7BBD0 /* MBProgressHUD.m in Sources */,
+				8DA9CA531A059FF200187C25 /* PFActivityObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

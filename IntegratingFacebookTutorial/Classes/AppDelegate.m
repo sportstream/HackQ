@@ -26,6 +26,7 @@
 
 #import "LoginViewController.h"
 #import "MainMenuViewController.h"
+#import "PFActivityObject.h"
 
 @implementation AppDelegate
 
@@ -35,6 +36,10 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    
+    // register PFActivityObject as a subclass so Parse always use PFActivityObject
+    // whenever a record related to Activity table is being read/written.
+    [PFActivityObject registerSubclass];
     
     // ****************************************************************************
     // Fill in with your Parse credentials:

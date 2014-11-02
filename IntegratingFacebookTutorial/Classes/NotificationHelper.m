@@ -13,6 +13,11 @@ NSString *const notificationNamePrefix = @"NotificationName";
 
 @implementation NotificationHelper
 
++ (void)pushNotification:(NotificationList)notification
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:[self convertNotificationListToString:notification] object:nil];
+}
+
 + (void)pushNotification:(NotificationList)notification WithObject:(id)object
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:[self convertNotificationListToString:notification] object:object];
