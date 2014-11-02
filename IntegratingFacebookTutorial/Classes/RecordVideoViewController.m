@@ -12,6 +12,7 @@
 #import "MBProgressHUD.h"
 #import "NotificationHelper.h"
 #import <AssetsLibrary/AssetsLibrary.h>
+#import "HackVideoPlayer.h"
 
 @interface RecordVideoViewController ()
 
@@ -22,7 +23,7 @@
 @property BOOL shootingVideo;
 @property float recordTime;
 @property RecordViewMode mode;
-@property PFObject *activityObject;
+@property PFActivityObject *activityObject;
 @property NSTimer *timeTimer;
 @property UILabel *timeLabel;
 @property NSURL *questionVideoUrl;
@@ -42,19 +43,19 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
     return self;
 }
 
-- (id)initWithMode:(RecordViewMode)mode withRecipient:(PFUser *)toUser withActivityObject:(PFObject *)activityObject withQuestionVideoUrl:(NSURL *)questionVideoUrl {
+- (id)initWithMode:(RecordViewMode)mode withRecipient:(PFUser *)toUser withActivityObject:(PFActivityObject *)activityObject withQuestionVideoUrl:(NSURL *)questionVideoUrl {
     if (self = [self initWithMode:mode withRecipient:toUser]) {
-        self.questionVideoUrl = questionVideoUrl;
         // Initialization code
+        self.questionVideoUrl = questionVideoUrl;
         self.activityObject = activityObject;
     }
     return self;
 }
 
-- (PFObject*)initializeActivityClassItem {
+- (PFActivityObject*)initializeActivityClassItem {
     PFObject *video;
     
-    PFObject *activityItem = [PFObject objectWithClassName:@"Activity"];
+    PFActivityObject *activityItem = [PFActivityObject object];
     [activityItem setObject:[PFUser currentUser] forKey:@"fromUser"];
     [activityItem setObject:self.toUser forKey:@"toUser"];
     
@@ -75,11 +76,6 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
             break;
     }
     return activityItem;
-}
-
-- (void)updateRepliedValue:(NSNumber *)value {
-    [self.activityObject setObject:value forKey:@"replied"];
-    [self.activityObject save];
 }
 
 -(void)showCamera
@@ -185,6 +181,7 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
 
 -(IBAction)xTap
 {
+    self.navigationController.navigationBarHidden = NO;
     [self showTabBar:self.tabBarController];
     [self.navigationController popViewControllerAnimated:NO];
 }
@@ -222,7 +219,7 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
                 
                  VideosUploadedBooleanResultBlock callbackBlock = ^(PFObject *video, PFObject *concatVideo) {
                     // prepare activity class object
-                    PFObject *activityItem = [self initializeActivityClassItem];
+                    PFActivityObject *activityItem = [self initializeActivityClassItem];
                     [activityItem setObject:video forKey:@"video"];
                     if (concatVideo != nil)
                         [activityItem setObject:concatVideo forKey:@"stitchedVideo"];
@@ -237,28 +234,22 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
                             // Set custom view mode
                             self.hud.mode = MBProgressHUDModeCustomView;
                             [self.hud hide:YES afterDelay:3];
+                            
+                            [self xTap];
                             if (self.mode == RecordViewModeAnswer) {
                                 // original video activity object's property replied value should be updated to TRUE.
-                                // fire the event
-                                NSDictionary *userInfo = @{
-                                                           @"value" : [NSNumber numberWithBool:YES],
-                                                           @"key" : @"replied"
-                                                           };
-                                [NotificationHelper pushNotification:NotificationUpdateActivityClassItem
-                                                          WithObject:userInfo];
+                                [self.activityObject updateRepliedValue:[NSNumber numberWithBool:YES]];
                                 
                                 // original video activity object's property stitchedVideo value should be updated accordingly.
-                                // fire the event
-                                NSDictionary *userInfoNext = @{
-                                                           @"value" : concatVideo,
-                                                           @"key" : @"stitchedVideo"
-                                                           };
-                                [NotificationHelper pushNotification:NotificationUpdateActivityClassItem
-                                                          WithObject:userInfoNext];
+                                [self.activityObject updateValue:concatVideo withKey:@"stitchedVideo"];
                                 
-                                [self playVideo:self.concatVideoURL];
+                                // TODO
+                                // for some reason self.activityObject hasn't been updated at this point
+                                // and HackVideoPlayer plays the original question video.
+                                // will fix it.
+                                [self loadVideoPlayer:self.concatVideoURL];
                             }
-                            //                            [self xTap];
+                            //[self xTap];
                             
                         }
                     }];
@@ -465,6 +456,14 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
     }
 }
 
+-(void)loadVideoPlayer:(NSURL *)videoURL {
+    HackVideoPlayer *videoPlayer = [[HackVideoPlayer alloc] initWithContentURL:videoURL];
+    if (self.activityObject != nil)
+        videoPlayer.activityItem = self.activityObject;
+    
+    [self.navigationController pushViewController:videoPlayer animated:YES];
+}
+
 #pragma mark - play video
 
 -(void)playVideo:(NSURL *)url
@@ -493,7 +492,7 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
     [self showCamera];
 }
 
-- (void)didReceiveMemoryWarnivifnbugtfritiubkbetlktfivilhtdfnjnifiegngclhnbejtbddbrfevderfiheirkvvdlrigtulcfincbehbidtuubdjejljgeccfegbhgbjjvjtntfjnefufllifkng {
+- (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }

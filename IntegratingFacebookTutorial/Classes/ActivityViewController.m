@@ -8,17 +8,15 @@
 
 #import "ActivityViewController.h"
 #import <MobileCoreServices/MobileCoreServices.h>
-#import <MediaPlayer/MediaPlayer.h>
 #import "MBProgressHUD.h"
-#import "RecordVideoViewController.h"
+#import "PFActivityObject.h"
+#import "HackVideoPlayer.h"
 
 @interface ActivityViewController ()
 
 @property MPMoviePlayerViewController *videoViewController;
-@property UIButton *playButton;
-@property UIButton *replyButton;
-@property PFObject *selectedActivityItem;
-@property NSURL *currentVideoUrl;
+
+@property PFActivityObject *selectedActivityItem;
 @property MBProgressHUD *hud;
 
 @end
@@ -28,17 +26,20 @@
 - (id)init {
     if (self = [super initWithClassName:@"Activity"]) {
         // Initialization code
-        [NotificationHelper registerForNotification:NotificationUpdateActivityClassItem WithDelegate:self];
+        [NotificationHelper registerForNotification:NotificationActivityItemUpdated WithDelegate:self];
     }
     return self;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    PFObject *selected = [self objectAtIndexPath:indexPath];
+    PFActivityObject *selected = (PFActivityObject *)[self objectAtIndexPath:indexPath];
     self.selectedActivityItem = selected;
     
-    PFObject *videoObject = [selected objectForKey:@"video"];
+    PFObject *videoObject = [self.selectedActivityItem isStitchedVideoAvailable]
+                                                                                ? [selected objectForKey:@"stitchedVideo"]
+                                                                                : [selected objectForKey:@"video"];
+    
     PFFile *videoFile = [videoObject objectForKey:@"videoFile"];
     
     self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
@@ -51,39 +52,9 @@
             self.hud.mode = MBProgressHUDModeCustomView;
             [self.hud hide:NO];
             
-            [self loadVideo:data];
+            [self loadVideoPlayer:data];
         }
     }];
-}
-
-- (void)replyAction:(id)sender {
-    if ([self isSelectedQuestionRepliedBefore]) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Problem"
-                                                        message:@"You answered this question already!"
-                                                       delegate:nil
-                                              cancelButtonTitle:nil
-                                              otherButtonTitles:@"OK", nil];
-        [alert show];
-        return;
-    }
-    PFUser *toUser = (PFUser *)[self.selectedActivityItem objectForKey:@"fromUser"];
-    RecordVideoViewController *r = [[RecordVideoViewController alloc] initWithMode:RecordViewModeAnswer withRecipient:toUser withActivityObject:self.selectedActivityItem withQuestionVideoUrl:self.currentVideoUrl];
-    self.navigationController.navigationBarHidden = YES;
-    [self.navigationController pushViewController:r animated:YES];
-}
-
-- (void)playAction:(id)sender {
-    [self hidePlayButton];
-    [self hideReplyButton];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(videoPlayBackDidFinish:)
-                                                 name:MPMoviePlayerPlaybackDidFinishNotification
-                                               object:self.videoViewController.moviePlayer];
-    [self.videoViewController.moviePlayer play];
-    
-    // update seen value
-    [self updateSeenValue:[NSNumber numberWithBool:YES]];
 }
 
 - (PFTableViewCell *)tableView:(UITableView *)tableView
@@ -124,6 +95,7 @@
     PFQuery *query = [PFQuery queryWithClassName:@"Activity"];
     [query includeKey:@"fromUser"];
     [query includeKey:@"video"];
+    [query includeKey:@"stitchedVideo"];
     [query whereKey:@"toUser" equalTo:currentUser];
     
 //    NSSortDescriptor *aDescriptor = [[NSSortDescriptor alloc] initWithKey:@"replied" ascending:YES];
@@ -137,109 +109,14 @@
     return query;
 }
 
-- (BOOL)canBeReplied {
-    NSString *type = [self.selectedActivityItem objectForKey:@"type"];
-    return [type isEqualToString:@"question"];
-}
-
-- (BOOL)isSelectedQuestionRepliedBefore {
-    NSNumber *isReplied = [self.selectedActivityItem objectForKey:@"replied"];
-    return [isReplied boolValue];
-}
-
-- (void)updateSeenValue:(id)value {
-    [self updateActivityItemValue:value withKey:@"seen"];
-}
-
-- (void)updateActivityItemValue:(id)value withKey:(NSString *)key {
-    if ([value isEqual:[self.selectedActivityItem objectForKey:key]])
-        return;
-    [self.selectedActivityItem setObject:value forKey:key];
-    [self.selectedActivityItem saveInBackground];
-    
-    // reload table each time we update a value
-    [[self tableView] reloadData];
-}
-
-- (void)loadVideo:(NSData *)data
+- (void)loadVideoPlayer:(NSData *)data
 {
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *appFile = [documentsDirectory stringByAppendingPathComponent:@"MyFile.mov"];
-    [data writeToFile:appFile atomically:YES];
-    //and then into NSURL.
-    self.currentVideoUrl = [NSURL fileURLWithPath:appFile];
+    HackVideoPlayer *videoPlayer = [[HackVideoPlayer alloc] initWithData:data];
+    videoPlayer.activityItem = self.selectedActivityItem;
     
-    MPMoviePlayerViewController *mpvc = [[MPMoviePlayerViewController alloc] initWithContentURL:self.currentVideoUrl];
-    self.videoViewController = mpvc;
+    self.videoViewController = videoPlayer;
     
-    self.playButton = [self createPlayButton];
-    self.replyButton = [self createReplyButton];
-    
-    // hide it by default until user finishes watching the video.
-    [self hideReplyButton];
-    
-    [self.videoViewController.view addSubview:self.playButton];
-    [self.videoViewController.view addSubview:self.replyButton];
-    
-    MPMoviePlayerController *videoController = [mpvc moviePlayer];
-    videoController.fullscreen = YES;
-    videoController.shouldAutoplay = NO;
-    videoController.scalingMode = MPMovieScalingModeAspectFit;
-    videoController.controlStyle = MPMovieControlStyleNone;
-    
-    [self.navigationController pushViewController:mpvc animated:YES];
-}
-
-- (void)videoPlayBackDidFinish:(NSNotification *)notification
-{
-    [self showPlayButton];
-    
-    if ([self canBeReplied])
-        [self showReplyButton];
-    
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:MPMoviePlayerPlaybackDidFinishNotification object:nil];
-    // Stop the video player and remove it from view
-    [self.videoViewController.moviePlayer stop];
-    //[self.videoViewController dismissMoviePlayerViewControllerAnimated];
-    //[self.navigationController popViewControllerAnimated:YES];
-}
-
-- (void)showPlayButton {
-    [self.playButton setHidden:NO];
-}
-
-- (void)hidePlayButton {
-    [self.playButton setHidden:YES];
-}
-
-- (void)showReplyButton {
-    [self.replyButton setHidden:NO];
-}
-
-- (void)hideReplyButton {
-    [self.replyButton setHidden:YES];
-}
-
-- (UIButton *)createPlayButton {    // Method for creating button, with background image and other properties
-    UIButton *playButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    playButton.frame = CGRectMake(110.0, 360.0, 100.0, 100.0);
-    UIImage *buttonImageNormal = [UIImage imageNamed:@"playIcon.png"];
-    playButton.backgroundColor = [UIColor clearColor];
-    [playButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal ];
-    [playButton setBackgroundImage:buttonImageNormal forState:UIControlStateNormal];
-    [playButton addTarget:self action:@selector(playAction:) forControlEvents:UIControlEventTouchUpInside];
-    return playButton;
-}
-
-- (UIButton *)createReplyButton {    // Method for creating button, with background image and other properties
-    UIButton *replyButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    replyButton.frame = CGRectMake(110.0, 200.0, 100.0, 40.0);
-    [replyButton setTitle:@"Reply" forState:UIControlStateNormal];
-    replyButton.backgroundColor = [UIColor grayColor];
-    [replyButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [replyButton addTarget:self action:@selector(replyAction:) forControlEvents:UIControlEventTouchUpInside];
-    return replyButton;
+    [self.navigationController pushViewController:videoPlayer animated:YES];
 }
 
 - (NSString *)getLocalizedStringForDate:(NSDate *)date {
@@ -263,19 +140,17 @@
 
 - (void)reactOnNotification:(NSNotification*)notification {
     NotificationList notificationName = [NotificationHelper getNotificationListName:notification];
-    if (notificationName == NotificationUpdateActivityClassItem) {
-        NSDictionary *userInfo = [notification object];
-        [self updateActivityItemValue:[userInfo objectForKey:@"value"] withKey:[userInfo objectForKey:@"key"]];
+    if (notificationName == NotificationActivityItemUpdated) {
+        [self.tableView reloadData];
     }
 }
 
 #pragma mark - UINavigationControllerDelegate
 
 - (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
-    if ([viewController isKindOfClass:[MPMoviePlayerViewController class]]) {
-        MPMoviePlayerViewController *v = (MPMoviePlayerViewController *)viewController;
+    if ([viewController isKindOfClass:[HackVideoPlayer class]]) {
+        HackVideoPlayer *v = (HackVideoPlayer *)viewController;
         //[[v moviePlayer] play];
-        
     }
 }
 
