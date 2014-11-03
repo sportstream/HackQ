@@ -80,7 +80,12 @@
     
     NSString *objectType = object[@"type"];
     if ([objectType isEqualToString:@"question"])
-        cell.imageView.image = [UIImage imageNamed:@"questionIcon"];
+    {
+        if (object[@"replied"] == [NSNumber numberWithBool:YES])
+            cell.imageView.image = [UIImage imageNamed:@"repliedIcon"];
+        else
+            cell.imageView.image = [UIImage imageNamed:@"questionIcon"];
+    }
     else if ([objectType isEqualToString:@"answer"])
         cell.imageView.image = [UIImage imageNamed:@"answerIcon"];
     

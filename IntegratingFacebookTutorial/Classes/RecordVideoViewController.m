@@ -225,7 +225,7 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
             video[@"videoFile"] = videoFile;
             [video setObject:[PFUser currentUser] forKey:@"user"];
             [video saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                
+
                  VideosUploadedBooleanResultBlock callbackBlock = ^(PFObject *video, PFObject *concatVideo) {
                     // prepare activity class object
                     PFActivityObject *activityItem = [self initializeActivityClassItem];

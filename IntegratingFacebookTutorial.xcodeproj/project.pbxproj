@@ -16,6 +16,8 @@
 		0F5F7D231A07383700483FA2 /* xButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F5F7D221A07383700483FA2 /* xButton@2x.png */; };
 		0F5F7D251A073A3F00483FA2 /* leftArrowWhite@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F5F7D241A073A3F00483FA2 /* leftArrowWhite@2x.png */; };
 		0F5F7D271A073BB300483FA2 /* chevronLeft@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F5F7D261A073BB300483FA2 /* chevronLeft@2x.png */; };
+		0F5F7D2F1A08352100483FA2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0F5F7D2E1A08352100483FA2 /* Images.xcassets */; };
+		0F5F7D311A08363600483FA2 /* repliedIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F5F7D301A08363600483FA2 /* repliedIcon@2x.png */; };
 		0FCAF50F19F6C24D00BB4BCE /* MainMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FCAF50D19F6C24D00BB4BCE /* MainMenuViewController.m */; };
 		0FCAF51019F6C24D00BB4BCE /* MainMenuViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0FCAF50E19F6C24D00BB4BCE /* MainMenuViewController.xib */; };
 		0FD4BD0A19F6E6F700F7BBD0 /* RecordVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FD4BD0819F6E6F700F7BBD0 /* RecordVideoViewController.m */; };
@@ -77,6 +79,8 @@
 		0F5F7D221A07383700483FA2 /* xButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "xButton@2x.png"; sourceTree = "<group>"; };
 		0F5F7D241A073A3F00483FA2 /* leftArrowWhite@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "leftArrowWhite@2x.png"; sourceTree = "<group>"; };
 		0F5F7D261A073BB300483FA2 /* chevronLeft@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "chevronLeft@2x.png"; sourceTree = "<group>"; };
+		0F5F7D2E1A08352100483FA2 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = IntegratingFacebookTutorial/Images.xcassets; sourceTree = SOURCE_ROOT; };
+		0F5F7D301A08363600483FA2 /* repliedIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "repliedIcon@2x.png"; sourceTree = "<group>"; };
 		0FCAF50C19F6C24D00BB4BCE /* MainMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainMenuViewController.h; sourceTree = "<group>"; };
 		0FCAF50D19F6C24D00BB4BCE /* MainMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainMenuViewController.m; sourceTree = "<group>"; };
 		0FCAF50E19F6C24D00BB4BCE /* MainMenuViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainMenuViewController.xib; path = ../Classes/MainMenuViewController.xib; sourceTree = "<group>"; };
@@ -243,10 +247,12 @@
 		8103BCDD19AD217900BCF4C7 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				0F5F7D2E1A08352100483FA2 /* Images.xcassets */,
 				0FD4BD0919F6E6F700F7BBD0 /* RecordVideoViewController.xib */,
 				0FCAF50E19F6C24D00BB4BCE /* MainMenuViewController.xib */,
 				8103BCE919AD217900BCF4C7 /* LoginViewController.xib */,
 				8103BCEA19AD217900BCF4C7 /* TableHeaderView.xib */,
+				0F5F7D301A08363600483FA2 /* repliedIcon@2x.png */,
 				0F5F7D241A073A3F00483FA2 /* leftArrowWhite@2x.png */,
 				0F5F7D261A073BB300483FA2 /* chevronLeft@2x.png */,
 				0F5F7D221A07383700483FA2 /* xButton@2x.png */,
@@ -365,7 +371,7 @@
 				LastUpgradeCheck = 0610;
 				TargetAttributes = {
 					D4DA79E914D3345A0055F672 = {
-						DevelopmentTeam = V9WTTPBFK9;
+						DevelopmentTeam = YLV379QM22;
 					};
 				};
 			};
@@ -400,6 +406,7 @@
 				8103BCF219AD217900BCF4C7 /* Default@2x.png in Resources */,
 				8103BCF619AD217900BCF4C7 /* login-button-small-pressed.png in Resources */,
 				8103BCFA19AD217900BCF4C7 /* LoginViewController.xib in Resources */,
+				0F5F7D2F1A08352100483FA2 /* Images.xcassets in Resources */,
 				8103BCF919AD217900BCF4C7 /* login-button-small@2x.png in Resources */,
 				8103BCF119AD217900BCF4C7 /* Default.png in Resources */,
 				0FD4BD2119FF01B200F7BBD0 /* redButton@2x.png in Resources */,
@@ -411,6 +418,7 @@
 				0F5F7D1F1A07353200483FA2 /* refreshIconWhite@2x.png in Resources */,
 				0F5F7D1B1A0729A600483FA2 /* questionIcon@2x.png in Resources */,
 				0FD4BD1319F7008100F7BBD0 /* playIcon@2x.png in Resources */,
+				0F5F7D311A08363600483FA2 /* repliedIcon@2x.png in Resources */,
 				0FD4BD1F19FAE90C00F7BBD0 /* bubbleIcon.png in Resources */,
 				8103BCF519AD217900BCF4C7 /* Icon@2x.png in Resources */,
 				0FD4BD1119F6FE8200F7BBD0 /* saveIcon@2x.png in Resources */,
@@ -529,6 +537,8 @@
 		D4DA7A0314D3345A0055F672 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -548,6 +558,8 @@
 		D4DA7A0414D3345A0055F672 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
