@@ -57,6 +57,11 @@
     }];
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 50.0;
+}
+
 - (PFTableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath
                         object:(PFObject *)object {
@@ -64,28 +69,39 @@
     PFTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     if (!cell) {
         cell = [[PFTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
+        cell.imageView.contentMode = UIViewContentModeScaleAspectFit;
     }
     
     UIFont *font;
     if ([object[@"seen"] boolValue])
-        font = [UIFont fontWithName:@"HelveticaNeue-Light" size:14];
+        font = [UIFont fontWithName:@"HelveticaNeue-Light" size:20];
     else
-        font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:14];
+        font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:20];
     
-    NSString *titleStringPrefix;
     NSString *objectType = object[@"type"];
     if ([objectType isEqualToString:@"question"])
-        titleStringPrefix = @"A Question From ";
+        cell.imageView.image = [UIImage imageNamed:@"questionIcon"];
     else if ([objectType isEqualToString:@"answer"])
-        titleStringPrefix = @"An Answer From ";
+        cell.imageView.image = [UIImage imageNamed:@"answerIcon"];
     
-    NSString *titleString = [titleStringPrefix stringByAppendingString:object[@"fromUser"][@"fullname"]];
+    NSString *titleString = object[@"fromUser"][@"fullname"];
     
     NSAttributedString *labelText = [[NSAttributedString alloc] initWithString:titleString attributes: @{ NSFontAttributeName : font }];
     
     cell.textLabel.attributedText = labelText;
-    cell.detailTextLabel.text = [self getLocalizedStringForDate:[object createdAt]];
+
+    if (!cell.accessoryView)
+    {
+        UILabel *label = [UILabel new];
+        label.frame = CGRectMake(0,0,50,50);
+        label.font = [UIFont fontWithName:@"Helvetica" size:12.0];
+        label.textAlignment = NSTextAlignmentRight;
+        cell.accessoryView = label;
+    }
     
+    UILabel *label = (UILabel *)cell.accessoryView;
+    label.text = [self timeAgo:[object createdAt]];
+
     return cell;
 }
 
@@ -125,6 +141,12 @@
     return [date descriptionWithLocale:[NSLocale systemLocale]];
 }
 
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:68.0/255.0 green:98.0/255.0 blue:158.0/255.0 alpha:1.0];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -152,6 +174,23 @@
         HackVideoPlayer *v = (HackVideoPlayer *)viewController;
         //[[v moviePlayer] play];
     }
+}
+
+- (NSString *)timeAgo:(NSDate *)compareDate{
+    NSTimeInterval timeInterval = -[compareDate timeIntervalSinceNow];
+    int temp = 0;
+    NSString *result;
+    if (timeInterval < 60) {
+        result = [NSString stringWithFormat:@"Just now"];   //less than a minute
+    }else if((temp = timeInterval/60) <60){
+        result = [NSString stringWithFormat:@"%dm",temp];   //minutes ago
+    }else if((temp = temp/60) <24){
+        result = [NSString stringWithFormat:@"%dh",temp];   //hours ago
+    }else{
+        temp = temp / 24;
+        result = [NSString stringWithFormat:@"%dd",temp];   //days ago
+    }
+    return  result;
 }
 
 /*

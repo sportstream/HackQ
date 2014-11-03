@@ -8,6 +8,7 @@
 
 #import "HackVideoPlayer.h"
 #import "RecordVideoViewController.h"
+#import "AppDelegate.h"
 
 @interface HackVideoPlayer ()
 
@@ -34,7 +35,22 @@
     return self;
 }
 
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.navigationController.navigationBar.barTintColor = [UIColor blackColor];
+    [(AppDelegate *)[[UIApplication sharedApplication] delegate] hideTabBar:self.tabBarController];
+}
+
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [(AppDelegate *)[[UIApplication sharedApplication] delegate] showTabBar:self.tabBarController];
+}
+
 - (void)viewDidLoad {
+    [super viewDidLoad];
+
     self.playButton = [self createPlayButton];
     self.replyButton = [self createReplyButton];
     self.shareButton = [self createShareButton];

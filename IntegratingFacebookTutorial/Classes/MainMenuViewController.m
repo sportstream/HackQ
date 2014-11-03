@@ -37,7 +37,7 @@
 
     UINavigationController *secondNavigationController = [[UINavigationController alloc]
                             initWithRootViewController:svc];
-    svc.title=@"Record Video";
+    svc.title=@"Ask a Question";
     svc.tabBarItem.image=[UIImage imageNamed:@"questionMarkIcon.png"];
     
     self.tab.viewControllers=[NSArray arrayWithObjects:firstNavigationController, secondNavigationController, nil];

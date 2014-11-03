@@ -10,12 +10,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "IntegratingFacebookTutorial/Classes/RecordVideoViewController.m"
-            timestampString = "436341683.469832"
+            timestampString = "436685075.399918"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "406"
-            endingLineNumber = "406"
-            landmarkName = "-exportDidFinish:"
+            startingLineNumber = "354"
+            endingLineNumber = "354"
+            landmarkName = "-videoConcat:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -26,7 +26,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "IntegratingFacebookTutorial/Classes/RecordVideoViewController.m"
-            timestampString = "436341683.469832"
+            timestampString = "436685075.399918"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "206"

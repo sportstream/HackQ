@@ -49,10 +49,10 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="IHt-xh-9Ee">
-                            <rect key="frame" x="275" y="35" width="30" height="30"/>
+                            <rect key="frame" x="270" y="25" width="50" height="50"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <fontDescription key="fontDescription" type="system" pointSize="32"/>
-                            <state key="normal" title="X">
+                            <state key="normal" image="xButton.png">
                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                             </state>
                             <connections>
@@ -85,7 +85,8 @@
     </objects>
     <resources>
         <image name="playIcon.png" width="256" height="256"/>
-        <image name="refreshIconWhite.png" width="256" height="256"/>
+        <image name="refreshIconWhite.png" width="40" height="40"/>
+        <image name="xButton.png" width="25" height="25"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
