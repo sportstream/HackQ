@@ -56,6 +56,12 @@
     }
 }
 
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [self playAction:nil]; //autoplay 
+}
+
 -(void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
@@ -167,7 +173,7 @@
     
     [[NSNotificationCenter defaultCenter]removeObserver:self name:MPMoviePlayerPlaybackDidFinishNotification object:nil];
     // Stop the video player and remove it from view
-    [self.moviePlayer stop];
+//    [self.moviePlayer stop];
     //[self.videoViewController dismissMoviePlayerViewControllerAnimated];
     //[self.navigationController popViewControllerAnimated:YES];
 }
