@@ -10,7 +10,8 @@
 #import "NotificationDelegate.h"
 
 typedef NS_ENUM(NSInteger, NotificationList) {
-    NotificationActivityItemUpdated
+    NotificationActivityItemUpdated,
+    NotificationQuestionVideoURLUpdated
 };
 
 @interface NotificationHelper : NSObject
