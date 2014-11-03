@@ -48,6 +48,8 @@
 }
 
 - (void)viewDidLoad {
+    [super viewDidLoad];
+    
     NSLog(@"login view did load.");
 }
 

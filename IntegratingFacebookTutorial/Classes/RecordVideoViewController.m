@@ -24,7 +24,7 @@
 @property BOOL shootingVideo;
 @property float recordTime;
 @property RecordViewMode mode;
-@property PFActivityObject *activityObject;
+@property __block PFActivityObject *activityObject;
 @property NSTimer *timeTimer;
 @property UILabel *timeLabel;
 @property NSURL *questionVideoUrl;
@@ -199,6 +199,15 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
     [self showCamera];
 }
 
+-(void)updateOriginalActivityItem:(PFObject *)concatVideo {
+    // original video activity object's property replied value should be updated to TRUE.
+    [self.activityObject updateRepliedValue:[NSNumber numberWithBool:YES]];
+    
+    // original video activity object's property stitchedVideo value should be updated accordingly.
+    [self.activityObject updateValue:concatVideo withKey:@"stitchedVideo"];
+
+}
+
 - (IBAction)saveTap
 {
     [self videoConcat:^(NSURL *concatVideoUrl) {
@@ -227,7 +236,7 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
                     // update activity table
                     [activityItem saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                         if (succeeded) {
-                            [self.hud setLabelText:@"Sent!"];
+                            [self.hud setLabelText:@"Replied!"];
                             
                             self.hud.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkmark.png"]];
                             
@@ -235,22 +244,25 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
                             self.hud.mode = MBProgressHUDModeCustomView;
                             [self.hud hide:YES afterDelay:3];
                             
-                            [self xTap];
                             if (self.mode == RecordViewModeAnswer) {
-                                // original video activity object's property replied value should be updated to TRUE.
-                                [self.activityObject updateRepliedValue:[NSNumber numberWithBool:YES]];
                                 
-                                // original video activity object's property stitchedVideo value should be updated accordingly.
-                                [self.activityObject updateValue:concatVideo withKey:@"stitchedVideo"];
+                                // update original activity item(question)
+                                [self updateOriginalActivityItem:concatVideo];
                                 
                                 // TODO
                                 // for some reason self.activityObject hasn't been updated at this point
                                 // and HackVideoPlayer plays the original question video.
                                 // will fix it.
-                                [self loadVideoPlayer:self.concatVideoURL];
+                                //[self loadVideoPlayer:self.concatVideoURL];
+                                
+                                //HACK
+                                NSDictionary *userInfo = @{
+                                                           @"url" : self.concatVideoURL
+                                                           };
+                                [NotificationHelper pushNotification:NotificationQuestionVideoURLUpdated WithObject:userInfo];
+
                             }
-                            //[self xTap];
-                            
+                            [self xTap];
                         }
                     }];
                 };

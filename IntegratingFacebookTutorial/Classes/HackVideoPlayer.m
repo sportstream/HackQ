@@ -9,10 +9,10 @@
 #import "HackVideoPlayer.h"
 #import "RecordVideoViewController.h"
 #import "AppDelegate.h"
+#import "NotificationHelper.h"
 
 @interface HackVideoPlayer ()
 
-@property NSURL *currentVideoURL;
 @property UIButton *playButton;
 @property UIButton *replyButton;
 @property UIButton *shareButton;
@@ -31,6 +31,9 @@
 - (instancetype)initWithContentURL:(NSURL *)url {
     if (self = [super initWithContentURL:url]) {
         self.currentVideoURL = url;
+        
+        // register for notification
+        [NotificationHelper registerForNotification:NotificationQuestionVideoURLUpdated WithDelegate:self];
     }
     return self;
 }
@@ -40,6 +43,17 @@
     [super viewWillAppear:animated];
     self.navigationController.navigationBar.barTintColor = [UIColor blackColor];
     [(AppDelegate *)[[UIApplication sharedApplication] delegate] hideTabBar:self.tabBarController];
+    
+    // hide it by default until user finishes watching the video.
+    [self hideReplyButton];
+    [self hideShareButton];
+    
+    // react on any updates on currentVideoURL
+    MPMoviePlayerController *videoController = [self moviePlayer];
+    if (![self.currentVideoURL isEqual:[videoController contentURL]]) {
+        [videoController setContentURL:self.currentVideoURL];
+        [videoController prepareToPlay];
+    }
 }
 
 -(void)viewWillDisappear:(BOOL)animated
@@ -54,10 +68,6 @@
     self.playButton = [self createPlayButton];
     self.replyButton = [self createReplyButton];
     self.shareButton = [self createShareButton];
-    
-    // hide it by default until user finishes watching the video.
-    [self hideReplyButton];
-    [self hideShareButton];
     
     [self.view addSubview:self.playButton];
     [self.view addSubview:self.replyButton];
@@ -160,6 +170,13 @@
     [self.moviePlayer stop];
     //[self.videoViewController dismissMoviePlayerViewControllerAnimated];
     //[self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)reactOnNotification:(NSNotification*)notification {
+    NSDictionary *userInfo = [notification object];
+    NSURL *url = [userInfo objectForKey:@"url"];
+    if (url)
+        self.currentVideoURL = url;
 }
 
 - (void)showPlayButton {
