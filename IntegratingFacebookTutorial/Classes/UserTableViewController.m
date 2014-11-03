@@ -50,20 +50,26 @@
 
 - (PFQuery *)queryForTable {
     PFUser *currentUser = [PFUser currentUser];
-    PFObject *currentUsersRole = nil;
+    PFObject *currentUsersRole = (PFObject*)[currentUser objectForKey:@"userRole"];
     
     PFQuery *userQuery = [PFUser query];
-    NSArray *allUsers = [userQuery findObjects];
     
-    // find out currentuser's role object. (User -> userRole)
-    NSInteger resultsCount = [allUsers count];
-    for (int i = 0; i < resultsCount; i++)
-    {
-        PFObject *user = [allUsers objectAtIndex:i];
-        NSString *username = [user objectForKey:@"username"];
-        if ([username isEqualToString:[currentUser username]]) {
-            PFObject *userRole = [user objectForKey:@"userRole"];
-            currentUsersRole = userRole;
+    // currentUsersRole should be a valid object
+    // but keeping this code
+    // just to be safe
+    if (currentUsersRole == nil) {
+        // find out currentuser's role object. (User -> userRole)
+        // locks the main thread so this eventually be removed
+        NSArray *allUsers = [userQuery findObjects];
+        NSInteger resultsCount = [allUsers count];
+        for (int i = 0; i < resultsCount; i++)
+        {
+            PFObject *user = [allUsers objectAtIndex:i];
+            NSString *username = [user objectForKey:@"username"];
+            if ([username isEqualToString:[currentUser username]]) {
+                PFObject *userRole = [user objectForKey:@"userRole"];
+                currentUsersRole = userRole;
+            }
         }
     }
     

@@ -16,6 +16,7 @@
 @property UIButton *playButton;
 @property UIButton *replyButton;
 @property UIButton *shareButton;
+@property NSURL *currentVideoURL;
 
 @end
 

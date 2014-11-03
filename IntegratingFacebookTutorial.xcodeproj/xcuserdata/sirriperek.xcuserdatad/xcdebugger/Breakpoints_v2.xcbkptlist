@@ -25,13 +25,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "IntegratingFacebookTutorial/Classes/HackVideoPlayer.m"
-            timestampString = "436729370.791223"
+            filePath = "IntegratingFacebookTutorial/Classes/RecordVideoViewController.m"
+            timestampString = "436731111.774515"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "54"
-            endingLineNumber = "54"
-            landmarkName = "-viewWillAppear:"
+            startingLineNumber = "262"
+            endingLineNumber = "262"
+            landmarkName = "-saveTap"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -41,13 +41,29 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "IntegratingFacebookTutorial/Classes/RecordVideoViewController.m"
-            timestampString = "436729370.791223"
+            filePath = "IntegratingFacebookTutorial/Classes/UserTableViewController.m"
+            timestampString = "436746605.993668"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "258"
-            endingLineNumber = "258"
-            landmarkName = "-saveTap"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "-queryForTable"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "IntegratingFacebookTutorial/Classes/UserTableViewController.m"
+            timestampString = "436746757.721473"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "57"
+            endingLineNumber = "57"
+            landmarkName = "-queryForTable"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
