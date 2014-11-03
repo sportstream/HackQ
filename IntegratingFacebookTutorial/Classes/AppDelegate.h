@@ -23,4 +23,7 @@
 
 @property (nonatomic, strong) UIWindow *window;
 
+- (void) hideTabBar:(UITabBarController *) tabbarcontroller;
+- (void) showTabBar:(UITabBarController *) tabbarcontroller;
+
 @end

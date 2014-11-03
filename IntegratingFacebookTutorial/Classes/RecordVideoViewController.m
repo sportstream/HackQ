@@ -13,6 +13,7 @@
 #import "NotificationHelper.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "HackVideoPlayer.h"
+#import "AppDelegate.h"
 
 @interface RecordVideoViewController ()
 
@@ -102,13 +103,10 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
     } else {
         return;
     }
-    
-    // create the overlay view
-    UIView *overlayView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-    
-    // important - it needs to be transparent so the camera preview shows through!
-    overlayView.opaque=NO;
-    overlayView.backgroundColor=[UIColor clearColor];
+
+    UIView *overlayView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 50)];
+    overlayView.backgroundColor=[UIColor blackColor];
+    overlayView.alpha = 0.7;
     
     int recordButtonSize = 75;
     UIButton *recordButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -117,15 +115,17 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
     [recordButton addTarget:self action:@selector(shootVideo:) forControlEvents:UIControlEventTouchUpInside];
     
     UIButton *backButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    backButton.frame = CGRectMake(10,20,30,30);
-    [backButton setImage:[UIImage imageNamed:@"leftArrowWhite"] forState:UIControlStateNormal];
+    backButton.frame = CGRectMake(10,15,25,25);
+    [[backButton imageView] setContentMode: UIViewContentModeScaleAspectFit];
+
+    [backButton setImage:[UIImage imageNamed:@"chevronLeft"] forState:UIControlStateNormal];
     [backButton addTarget:self action:@selector(backButtonTap:) forControlEvents:UIControlEventTouchUpInside];
 
-    int timeLabelWidth = 50;
+    int timeLabelWidth = 25;
     _timeLabel = [UILabel new];
-    self.timeLabel.frame = CGRectMake(self.view.frame.size.width-timeLabelWidth-10,20,timeLabelWidth,30);
+    self.timeLabel.frame = CGRectMake(self.view.frame.size.width-timeLabelWidth-10,15,timeLabelWidth,30);
     self.timeLabel.textColor = [UIColor whiteColor];
-    self.timeLabel.text = @"0";
+    self.timeLabel.text = @"0.0";
     
     // parent view for our overlay
     UIView *cameraView=[[UIView alloc] initWithFrame:self.view.bounds];
@@ -182,14 +182,14 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
 -(IBAction)xTap
 {
     self.navigationController.navigationBarHidden = NO;
-    [self showTabBar:self.tabBarController];
+    [(AppDelegate *)[[UIApplication sharedApplication] delegate] showTabBar:self.tabBarController];
     [self.navigationController popViewControllerAnimated:NO];
 }
 
 -(void)timeTimerFired
 {
     _recordTime += .1;
-    _timeLabel.text = [NSString stringWithFormat:@"%f",floorf(_recordTime)];
+    _timeLabel.text = [NSString stringWithFormat:@"%.1f",floorf(_recordTime)];
 }
 
 #pragma mark - review video buttons
@@ -322,7 +322,7 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-    [self hideTabBar:self.tabBarController];
+    [(AppDelegate *)[[UIApplication sharedApplication] delegate] hideTabBar:self.tabBarController];
     [self dismissViewControllerAnimated:YES completion:nil];
     
     MPMoviePlayerController *theMovie = [[MPMoviePlayerController alloc] initWithContentURL:[info objectForKey:@"UIImagePickerControllerMediaURL"]];
@@ -333,58 +333,6 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
     self.imageView.image = [theMovie thumbnailImageAtTime:0 timeOption:MPMovieTimeOptionExact];
     self.videoUrl = [info objectForKey:@"UIImagePickerControllerMediaURL"];
     [self playTap];
-}
-
-#pragma mark - tab bar methods
-
-- (void) hideTabBar:(UITabBarController *) tabbarcontroller
-{
-    CGRect screenRect = [[UIScreen mainScreen] bounds];
-    
-    [UIView beginAnimations:nil context:NULL];
-    [UIView setAnimationDuration:0.5];
-    float fHeight = screenRect.size.height;
-    if(  UIDeviceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation) )
-    {
-        fHeight = screenRect.size.width;
-    }
-    
-    for(UIView *view in tabbarcontroller.view.subviews)
-    {
-        if([view isKindOfClass:[UITabBar class]])
-        {
-            [view setFrame:CGRectMake(view.frame.origin.x, fHeight, view.frame.size.width, view.frame.size.height)];
-        }
-        else
-        {
-            [view setFrame:CGRectMake(view.frame.origin.x, view.frame.origin.y, view.frame.size.width, fHeight)];
-            view.backgroundColor = [UIColor blackColor];
-        }
-    }
-    [UIView commitAnimations];
-}
-
-- (void) showTabBar:(UITabBarController *) tabbarcontroller
-{
-    CGRect screenRect = [[UIScreen mainScreen] bounds];
-    float fHeight = screenRect.size.height - tabbarcontroller.tabBar.frame.size.height;
-    
-    if(UIDeviceOrientationIsLandscape([UIApplication sharedApplication].statusBarOrientation))
-    {
-        fHeight = screenRect.size.width - tabbarcontroller.tabBar.frame.size.height;
-    }
-    
-    for(UIView *view in tabbarcontroller.view.subviews)
-    {
-        if([view isKindOfClass:[UITabBar class]])
-        {
-            [view setFrame:CGRectMake(view.frame.origin.x, fHeight, view.frame.size.width, view.frame.size.height)];
-        }
-        else
-        {
-            [view setFrame:CGRectMake(view.frame.origin.x, view.frame.origin.y, view.frame.size.width, fHeight)];
-        }
-    }
 }
 
 #pragma mark -
