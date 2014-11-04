@@ -121,7 +121,7 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
     [backButton setImage:[UIImage imageNamed:@"chevronLeft"] forState:UIControlStateNormal];
     [backButton addTarget:self action:@selector(backButtonTap:) forControlEvents:UIControlEventTouchUpInside];
 
-    int timeLabelWidth = 25;
+    int timeLabelWidth = 35;
     _timeLabel = [UILabel new];
     self.timeLabel.frame = CGRectMake(self.view.frame.size.width-timeLabelWidth-10,15,timeLabelWidth,30);
     self.timeLabel.textColor = [UIColor whiteColor];
@@ -210,9 +210,6 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
 
 - (IBAction)saveTap
 {
-    [self videoConcat:^(NSURL *concatVideoUrl) {
-        NSLog(@"%@",concatVideoUrl);
-    }];
     self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     [self.hud setLabelText:@"Sending"];
     [self.hud setDimBackground:YES];
@@ -340,7 +337,10 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
     theMovie.scalingMode = MPMovieScalingModeAspectFit;
     self.imageView.image = [theMovie thumbnailImageAtTime:0 timeOption:MPMovieTimeOptionExact];
     self.videoUrl = [info objectForKey:@"UIImagePickerControllerMediaURL"];
-    [self playTap];
+    
+    //for autoplay uncomment this and remove self.obscureView.hidden = YES;
+//    [self playTap];
+    self.obscureView.hidden = YES;
 }
 
 #pragma mark -

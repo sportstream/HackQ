@@ -89,7 +89,7 @@
     else if ([objectType isEqualToString:@"answer"])
         cell.imageView.image = [UIImage imageNamed:@"answerIcon"];
     
-    NSString *titleString = object[@"fromUser"][@"fullname"];
+    NSString *titleString = [NSString stringWithFormat:@"From %@", object[@"fromUser"][@"fullname"]];
     
     NSAttributedString *labelText = [[NSAttributedString alloc] initWithString:titleString attributes: @{ NSFontAttributeName : font }];
     
