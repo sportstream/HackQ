@@ -26,4 +26,6 @@
 - (void) hideTabBar:(UITabBarController *) tabbarcontroller;
 - (void) showTabBar:(UITabBarController *) tabbarcontroller;
 
+- (void)postVideoToFacebook:(NSData *)videoData withCallback:(void (^)(BOOL succeed))callback;
+
 @end
