@@ -10,12 +10,15 @@
 #import "RecordVideoViewController.h"
 #import "AppDelegate.h"
 #import "NotificationHelper.h"
+#import "MBProgressHUD.h"
 
 @interface HackVideoPlayer ()
 
 @property UIButton *playButton;
 @property UIButton *replyButton;
 @property UIButton *shareButton;
+@property NSURL *currentVideoURL;
+@property MBProgressHUD *hud;
 
 @end
 
@@ -127,7 +130,26 @@
 }
 
 - (void)shareAction:(id)sender {
-    
+    self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    [self.hud setLabelText:@"Uploading"];
+    [self.hud setDimBackground:YES];
+    [(AppDelegate *)[[UIApplication sharedApplication] delegate] postVideoToFacebook:[NSData dataWithContentsOfURL:self.currentVideoURL] withCallback:^(BOOL succeed) {
+        if (succeed) {
+            [self.hud setLabelText:@"Shared!"];
+            
+            self.hud.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkmark.png"]];
+            
+            // Set custom view mode
+            self.hud.mode = MBProgressHUDModeCustomView;
+            [self.hud hide:YES afterDelay:1];
+        }
+        else {
+            [self.hud setLabelText:@"Error! Try again"];
+            // Set custom view mode
+            self.hud.mode = MBProgressHUDModeCustomView;
+            [self.hud hide:YES afterDelay:3];
+        }
+    }];
 }
 
 - (void)replyAction:(id)sender {

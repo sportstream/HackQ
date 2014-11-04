@@ -28,6 +28,7 @@
 #import "MainMenuViewController.h"
 #import "PFActivityObject.h"
 
+
 @implementation AppDelegate
 
 #pragma mark -
@@ -80,6 +81,73 @@
     [self.window makeKeyAndVisible];
 
     return YES;
+}
+
+#pragma mark - facebook graph api related
+
+- (void)requestPublishPermissions:(void (^) (BOOL succeed)) block {
+
+    FBSession *activeSession = [PFFacebookUtils session];
+    BOOL canPublish = !([activeSession.permissions indexOfObject:@"publish_actions"] == NSNotFound);
+    
+    if (activeSession && activeSession.isOpen && !canPublish) {
+        [PFFacebookUtils reauthorizeUser:[PFUser currentUser] withPublishPermissions:@[@"publish_actions"] audience:FBSessionDefaultAudienceOnlyMe block:^(BOOL succeed, NSError *error) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                block(succeed);
+            });
+        }];
+        return;
+    }
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        block(canPublish);
+    });
+}
+
+- (void)postVideoToFacebook:(NSData *)videoData withCallback:(void (^)(BOOL succeed))callback {
+    [self requestPublishPermissions:^(BOOL succeed){
+        if (succeed) {
+            NSDictionary *params = @{
+                                     @"video.mov" : videoData,
+                                     @"contentType" : @"video/quicktime",
+                                     @"title": @"Video Q&A"
+                                     };
+            
+           [FBRequestConnection startWithGraphPath:@"me/videos" parameters:params HTTPMethod:@"POST" completionHandler:
+            ^(FBRequestConnection *connection, id result, NSError *error){
+                if(result)
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        callback(YES);
+                    });
+                else
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        callback(NO);
+                    });
+            }];
+            
+            
+            
+            //            FBRequestConnection *connection = [[FBRequestConnection alloc] init];
+            //            connection.errorBehavior = FBRequestConnectionErrorBehaviorReconnectSession
+            //            | FBRequestConnectionErrorBehaviorAlertUser
+            //            | FBRequestConnectionErrorBehaviorRetry;
+            //            [connection addRequest:[FBRequest requestWithGraphPath:@"me/videos" parameters:params HTTPMethod:@"POST"] completionHandler:^(FBRequestConnection *connection, id result, NSError *error){
+            //                if(result)
+            //                    dispatch_async(dispatch_get_main_queue(), ^{
+            //                        callback(YES);
+            //                    });
+            //                else
+            //                    dispatch_async(dispatch_get_main_queue(), ^{
+            //                        callback(NO);
+            //                    });
+            //            }];
+            //            [connection start];
+        }
+        else
+            dispatch_async(dispatch_get_main_queue(), ^{
+                callback(succeed);
+            });
+    }];
 }
 
 #pragma mark - tab bar methods

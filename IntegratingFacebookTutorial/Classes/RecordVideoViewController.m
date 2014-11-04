@@ -260,7 +260,6 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
                                                            @"url" : self.concatVideoURL
                                                            };
                                 [NotificationHelper pushNotification:NotificationQuestionVideoURLUpdated WithObject:userInfo];
-
                             }
                             [self xTap];
                         }
@@ -304,16 +303,13 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
             }];
         }
         else
-        [MBProgressHUD hideHUDForView:self.view animated:YES];
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
     }];
 }
 
 -(IBAction)playTap
 {
-    if (self.concatVideoURL != nil)
-        [self playVideo:self.concatVideoURL];
-    else
-        [self playVideo:self.videoUrl];
+    [self playVideo:self.videoUrl];
 }
 
 - (void)videoPlayBackDidFinish:(NSNotification *)notification
