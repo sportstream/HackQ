@@ -19,9 +19,9 @@
 		0F5F7D331A08604C00483FA2 /* repliedIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F5F7D321A08604C00483FA2 /* repliedIcon@2x.png */; };
 		0F7DB3611A0F31BC00B10F47 /* message_group-50@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F7DB3601A0F31BC00B10F47 /* message_group-50@2x.png */; };
 		0F7DB3631A0F31CC00B10F47 /* ask_question-50@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F7DB3621A0F31CC00B10F47 /* ask_question-50@2x.png */; };
-		0F7DB36D1A0F471D00B10F47 /* answerIconFlat@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F7DB36A1A0F471D00B10F47 /* answerIconFlat@2x.png */; };
-		0F7DB36E1A0F471D00B10F47 /* questionIconFlat@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F7DB36B1A0F471D00B10F47 /* questionIconFlat@2x.png */; };
-		0F7DB36F1A0F471D00B10F47 /* flatReplyIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F7DB36C1A0F471D00B10F47 /* flatReplyIcon@2x.png */; };
+		0F7DB3751A0F497900B10F47 /* flatReplyIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F7DB3721A0F497900B10F47 /* flatReplyIcon@2x.png */; };
+		0F7DB3781A0F49E100B10F47 /* questionIconFlat@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F7DB3761A0F49E100B10F47 /* questionIconFlat@2x.png */; };
+		0F7DB3791A0F49E100B10F47 /* answerIconFlat@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F7DB3771A0F49E100B10F47 /* answerIconFlat@2x.png */; };
 		0FCAF50F19F6C24D00BB4BCE /* MainMenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FCAF50D19F6C24D00BB4BCE /* MainMenuViewController.m */; };
 		0FCAF51019F6C24D00BB4BCE /* MainMenuViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0FCAF50E19F6C24D00BB4BCE /* MainMenuViewController.xib */; };
 		0FD4BD0A19F6E6F700F7BBD0 /* RecordVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FD4BD0819F6E6F700F7BBD0 /* RecordVideoViewController.m */; };
@@ -85,9 +85,9 @@
 		0F5F7D321A08604C00483FA2 /* repliedIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "repliedIcon@2x.png"; sourceTree = "<group>"; };
 		0F7DB3601A0F31BC00B10F47 /* message_group-50@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "message_group-50@2x.png"; sourceTree = "<group>"; };
 		0F7DB3621A0F31CC00B10F47 /* ask_question-50@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ask_question-50@2x.png"; sourceTree = "<group>"; };
-		0F7DB36A1A0F471D00B10F47 /* answerIconFlat@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "answerIconFlat@2x.png"; sourceTree = "<group>"; };
-		0F7DB36B1A0F471D00B10F47 /* questionIconFlat@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "questionIconFlat@2x.png"; sourceTree = "<group>"; };
-		0F7DB36C1A0F471D00B10F47 /* flatReplyIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flatReplyIcon@2x.png"; sourceTree = "<group>"; };
+		0F7DB3721A0F497900B10F47 /* flatReplyIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "flatReplyIcon@2x.png"; sourceTree = "<group>"; };
+		0F7DB3761A0F49E100B10F47 /* questionIconFlat@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "questionIconFlat@2x.png"; sourceTree = "<group>"; };
+		0F7DB3771A0F49E100B10F47 /* answerIconFlat@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "answerIconFlat@2x.png"; sourceTree = "<group>"; };
 		0FCAF50C19F6C24D00BB4BCE /* MainMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainMenuViewController.h; sourceTree = "<group>"; };
 		0FCAF50D19F6C24D00BB4BCE /* MainMenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainMenuViewController.m; sourceTree = "<group>"; };
 		0FCAF50E19F6C24D00BB4BCE /* MainMenuViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainMenuViewController.xib; path = ../Classes/MainMenuViewController.xib; sourceTree = "<group>"; };
@@ -258,9 +258,9 @@
 				0FCAF50E19F6C24D00BB4BCE /* MainMenuViewController.xib */,
 				8103BCE919AD217900BCF4C7 /* LoginViewController.xib */,
 				8103BCEA19AD217900BCF4C7 /* TableHeaderView.xib */,
-				0F7DB36A1A0F471D00B10F47 /* answerIconFlat@2x.png */,
-				0F7DB36B1A0F471D00B10F47 /* questionIconFlat@2x.png */,
-				0F7DB36C1A0F471D00B10F47 /* flatReplyIcon@2x.png */,
+				0F7DB3761A0F49E100B10F47 /* questionIconFlat@2x.png */,
+				0F7DB3771A0F49E100B10F47 /* answerIconFlat@2x.png */,
+				0F7DB3721A0F497900B10F47 /* flatReplyIcon@2x.png */,
 				0F7DB3601A0F31BC00B10F47 /* message_group-50@2x.png */,
 				0F7DB3621A0F31CC00B10F47 /* ask_question-50@2x.png */,
 				0F5F7D321A08604C00483FA2 /* repliedIcon@2x.png */,
@@ -417,18 +417,18 @@
 				8103BCFA19AD217900BCF4C7 /* LoginViewController.xib in Resources */,
 				0F5F7D2F1A08352100483FA2 /* Images.xcassets in Resources */,
 				8103BCF919AD217900BCF4C7 /* login-button-small@2x.png in Resources */,
-				0F7DB36F1A0F471D00B10F47 /* flatReplyIcon@2x.png in Resources */,
+				0F7DB3751A0F497900B10F47 /* flatReplyIcon@2x.png in Resources */,
 				8103BCF119AD217900BCF4C7 /* Default.png in Resources */,
 				0FD4BD2119FF01B200F7BBD0 /* redButton@2x.png in Resources */,
 				8103BCF719AD217900BCF4C7 /* login-button-small-pressed@2x.png in Resources */,
+				0F7DB3791A0F49E100B10F47 /* answerIconFlat@2x.png in Resources */,
 				0F5F7D1D1A072F7C00483FA2 /* answerIcon@2x.png in Resources */,
 				8103BCFB19AD217900BCF4C7 /* TableHeaderView.xib in Resources */,
 				8103BCF019AD217900BCF4C7 /* Default-568h@2x.png in Resources */,
 				0FD4BD1919F7170200F7BBD0 /* checkmark@2x.png in Resources */,
 				0F5F7D1F1A07353200483FA2 /* refreshIconWhite@2x.png in Resources */,
+				0F7DB3781A0F49E100B10F47 /* questionIconFlat@2x.png in Resources */,
 				0F5F7D1B1A0729A600483FA2 /* questionIcon@2x.png in Resources */,
-				0F7DB36E1A0F471D00B10F47 /* questionIconFlat@2x.png in Resources */,
-				0F7DB36D1A0F471D00B10F47 /* answerIconFlat@2x.png in Resources */,
 				0FD4BD1319F7008100F7BBD0 /* playIcon@2x.png in Resources */,
 				0F5F7D331A08604C00483FA2 /* repliedIcon@2x.png in Resources */,
 				0FD4BD1F19FAE90C00F7BBD0 /* bubbleIcon.png in Resources */,
