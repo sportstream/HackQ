@@ -11,6 +11,7 @@
 #import "MBProgressHUD.h"
 #import "PFActivityObject.h"
 #import "HackVideoPlayer.h"
+#import "AppDelegate.h"
 
 @interface ActivityViewController ()
 
@@ -33,28 +34,45 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    PFActivityObject *selected = (PFActivityObject *)[self objectAtIndexPath:indexPath];
-    self.selectedActivityItem = selected;
+    self.navigationController.navigationBar.barTintColor = [UIColor blackColor];
+    [(AppDelegate *)[[UIApplication sharedApplication] delegate] hideTabBar:self.tabBarController];
     
-    PFObject *videoObject = [self.selectedActivityItem isStitchedVideoAvailable]
-                                                                                ? [selected objectForKey:@"stitchedVideo"]
-                                                                                : [selected objectForKey:@"video"];
+    UIPageViewController *pageController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal options:nil];
+    pageController.dataSource = self;
+    [[pageController view] setFrame:self.view.frame];
     
-    PFFile *videoFile = [videoObject objectForKey:@"videoFile"];
+    HackVideoPlayer *initialViewController = [self viewControllerAtIndex:indexPath.row];
+    initialViewController.activityItem = (PFActivityObject *)[self.objects objectAtIndex:indexPath.row];
+    NSArray *viewControllers = [NSArray arrayWithObject:initialViewController];
     
-    self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    [self.hud setLabelText:@"Loading"];
-    [self.hud setDimBackground:YES];
+    [pageController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
     
-    [videoFile getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
-        if (error == nil) {
-            // Set custom view mode
-            self.hud.mode = MBProgressHUDModeCustomView;
-            [self.hud hide:NO];
-            
-            [self loadVideoPlayer:data];
-        }
-    }];
+    [self.navigationController pushViewController:pageController animated:YES];
+    self.navigationController.navigationBar.topItem.title = @""; //just show the
+    return;    
+
+//    PFActivityObject *selected = (PFActivityObject *)[self objectAtIndexPath:indexPath];
+//    self.selectedActivityItem = selected;
+//    
+//    PFObject *videoObject = [self.selectedActivityItem isStitchedVideoAvailable]
+//                                                                                ? [selected objectForKey:@"stitchedVideo"]
+//                                                                                : [selected objectForKey:@"video"];
+//    
+//    PFFile *videoFile = [videoObject objectForKey:@"videoFile"];
+//    
+//    self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+//    [self.hud setLabelText:@"Loading"];
+//    [self.hud setDimBackground:YES];
+//    
+//    [videoFile getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
+//        if (error == nil) {
+//            // Set custom view mode
+//            self.hud.mode = MBProgressHUDModeCustomView;
+//            [self.hud hide:NO];
+//            
+//            [self loadVideoPlayer:data];
+//        }
+//    }];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -116,6 +134,7 @@
     PFQuery *query = [PFQuery queryWithClassName:@"Activity"];
     [query includeKey:@"fromUser"];
     [query includeKey:@"video"];
+//    [query includeKey:@"thumbnailFile"];
     [query includeKey:@"stitchedVideo"];
     [query whereKey:@"toUser" equalTo:currentUser];
     
@@ -128,6 +147,11 @@
     [query orderByAscending:@"replied"];
     [query addDescendingOrder:@"createdAt"];
     return query;
+}
+
+- (void)objectsDidLoad:(NSError *)error
+{
+    [super objectsDidLoad:error];
 }
 
 - (void)loadVideoPlayer:(NSData *)data
@@ -144,23 +168,6 @@
     // TODO
     // show the date in a better format
     return [date descriptionWithLocale:[NSLocale systemLocale]];
-}
-
--(void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:68.0/255.0 green:98.0/255.0 blue:158.0/255.0 alpha:1.0];
-}
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    [self.navigationController setDelegate:self];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 #pragma mark - NotificationDelegate
@@ -198,14 +205,87 @@
     return  result;
 }
 
-/*
-#pragma mark - Navigation
+#pragma mark - UIPageViewController stuff
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (HackVideoPlayer *)viewControllerAtIndex:(NSUInteger)index {
+
+    PFActivityObject *obj = (PFActivityObject *)[self.objects objectAtIndex:index];
+//    PFObject *videoObject = [obj isStitchedVideoAvailable]
+//    ? [obj objectForKey:@"stitchedVideo"]
+//    : [obj objectForKey:@"video"];
+//    
+//    PFFile *videoFile = [videoObject objectForKey:@"videoFile"];
+//    HackVideoPlayer *childViewController = [[HackVideoPlayer alloc] initWithContentURL:[NSURL URLWithString:videoFile.url]];
+    HackVideoPlayer *childViewController = [[HackVideoPlayer alloc] initWithObj:obj];
+    childViewController.index = index;
+    childViewController.activityItem = obj;
+
+    return childViewController;
+    
 }
-*/
+
+- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController {
+    
+    NSUInteger index = [(HackVideoPlayer *)viewController index];
+    
+    if (index == 0) {
+        return nil;
+    }
+    
+    // Decrease the index by 1 to return
+    index--;
+    
+    return [self viewControllerAtIndex:index];
+    
+}
+
+- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController {
+    
+    NSUInteger index = [(HackVideoPlayer *)viewController index];
+    
+    index++;
+    
+    if (index == [self.objects count]) {
+        return nil;
+    }
+    
+    return [self viewControllerAtIndex:index];
+    
+}
+
+- (NSInteger)presentationCountForPageViewController:(UIPageViewController *)pageViewController {
+    // The number of items reflected in the page indicator.
+    return 0;
+}
+
+- (NSInteger)presentationIndexForPageViewController:(UIPageViewController *)pageViewController {
+    // The selected item reflected in the page indicator.
+    return 0;
+}
+
+#pragma - view delegates
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.navigationController.navigationBar.topItem.title = @"Inbox";
+    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:68.0/255.0 green:98.0/255.0 blue:158.0/255.0 alpha:1.0];
+    [(AppDelegate *)[[UIApplication sharedApplication] delegate] showTabBar:self.tabBarController];
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+    [self.navigationController setDelegate:self];
+}
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
+        self.navigationController.interactivePopGestureRecognizer.enabled = NO;
+        self.navigationController.interactivePopGestureRecognizer.delegate = nil;
+    }
+}
 
 @end

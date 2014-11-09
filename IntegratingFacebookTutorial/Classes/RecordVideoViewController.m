@@ -18,6 +18,7 @@
 @interface RecordVideoViewController ()
 
 @property NSURL *videoUrl;
+@property UIImage *thumbnailImg;
 @property MPMoviePlayerController *videoController;
 @property MBProgressHUD *hud;
 @property UIImagePickerController *cameraUI;
@@ -196,6 +197,7 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
 
 - (IBAction)redoTap
 {
+    _recordTime = 0.0;
     [self showCamera];
 }
 
@@ -214,94 +216,100 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
     [self.hud setLabelText:@"Sending"];
     [self.hud setDimBackground:YES];
     
-    // upload new recorded video
-    PFFile *videoFile = [PFFile fileWithData:[NSData dataWithContentsOfURL:self.videoUrl]];
-    [videoFile saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        if (succeeded) {
-            PFObject *video = [PFObject objectWithClassName:@"Video"];
-            video[@"videoFile"] = videoFile;
-            [video setObject:[PFUser currentUser] forKey:@"user"];
-            [video saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-
-                 VideosUploadedBooleanResultBlock callbackBlock = ^(PFObject *video, PFObject *concatVideo) {
-                    // prepare activity class object
-                    PFActivityObject *activityItem = [self initializeActivityClassItem];
-                    [activityItem setObject:video forKey:@"video"];
-                    if (concatVideo != nil)
-                        [activityItem setObject:concatVideo forKey:@"stitchedVideo"];
+    PFFile *thumbnailFile = [PFFile fileWithData:UIImageJPEGRepresentation(self.thumbnailImg, 0.8)];
+    [thumbnailFile saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        // upload new recorded video
+        PFFile *videoFile = [PFFile fileWithData:[NSData dataWithContentsOfURL:self.videoUrl]];
+        [videoFile saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            if (succeeded) {
+                PFObject *video = [PFObject objectWithClassName:@"Video"];
+                video[@"videoFile"] = videoFile;
+                [video setObject:[PFUser currentUser] forKey:@"user"];
+                [video saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                     
-                    // update activity table
-                    [activityItem saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                        if (succeeded) {
-                            [self.hud setLabelText:@"Replied!"];
-                            
-                            self.hud.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkmark.png"]];
-                            
-                            // Set custom view mode
-                            self.hud.mode = MBProgressHUDModeCustomView;
-                            [self.hud hide:YES afterDelay:3];
-                            
-                            if (self.mode == RecordViewModeAnswer) {
+                    VideosUploadedBooleanResultBlock callbackBlock = ^(PFObject *video, PFObject *concatVideo) {
+                        // prepare activity class object
+                        PFActivityObject *activityItem = [self initializeActivityClassItem];
+                        [activityItem setObject:video forKey:@"video"];
+                        [activityItem setObject:thumbnailFile forKey:@"thumbnailFile"];
+                        if (concatVideo != nil)
+                        [activityItem setObject:concatVideo forKey:@"stitchedVideo"];
+                        
+                        // update activity table
+                        [activityItem saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                            if (succeeded) {
+                                [self.hud setLabelText:@"Replied!"];
                                 
-                                // update original activity item(question)
-                                [self updateOriginalActivityItem:concatVideo];
+                                self.hud.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkmark.png"]];
                                 
-                                // TODO
-                                // for some reason self.activityObject hasn't been updated at this point
-                                // and HackVideoPlayer plays the original question video.
-                                // will fix it.
-                                //[self loadVideoPlayer:self.concatVideoURL];
+                                // Set custom view mode
+                                self.hud.mode = MBProgressHUDModeCustomView;
+                                [self.hud hide:YES afterDelay:3];
                                 
-                                //HACK
-                                NSDictionary *userInfo = @{
-                                                           @"url" : self.concatVideoURL
-                                                           };
-                                [NotificationHelper pushNotification:NotificationQuestionVideoURLUpdated WithObject:userInfo];
-                            }
-                            [self xTap];
-                        }
-                    }];
-                };
-                
-                if (succeeded) {
-                    if (self.mode == RecordViewModeAnswer) {
-                        // concat two videos and
-                        // upload concatinated video
-                        [self videoConcat:^(NSURL *concatVideoUrl) {
-                            // save the reference
-                            self.concatVideoURL = concatVideoUrl;
-                            
-                            // upload the video
-                            PFFile *concatVideoFile = [PFFile fileWithData:[NSData dataWithContentsOfURL:concatVideoUrl]];
-                            [concatVideoFile saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                                if (succeeded) {
-                                    PFObject *concatVideo = [PFObject objectWithClassName:@"Video"];
-                                    concatVideo[@"videoFile"] = concatVideoFile;
-                                    [concatVideo saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                                        if (succeeded) {
-                                            dispatch_async(dispatch_get_main_queue(), ^{
-                                                callbackBlock(video, concatVideo);
-                                            });
-                                        }
-                                    }];
+                                if (self.mode == RecordViewModeAnswer) {
+                                    
+                                    // update original activity item(question)
+                                    [self updateOriginalActivityItem:concatVideo];
+                                    
+                                    // TODO
+                                    // for some reason self.activityObject hasn't been updated at this point
+                                    // and HackVideoPlayer plays the original question video.
+                                    // will fix it.
+                                    //[self loadVideoPlayer:self.concatVideoURL];
+                                    
+                                    //HACK
+                                    NSDictionary *userInfo = @{
+                                                               @"url" : self.concatVideoURL
+                                                               };
+                                    [NotificationHelper pushNotification:NotificationQuestionVideoURLUpdated WithObject:userInfo];
                                 }
+                                [self xTap];
+                            }
+                        }];
+                    };
+                    
+                    if (succeeded) {
+                        if (self.mode == RecordViewModeAnswer) {
+                            // concat two videos and
+                            // upload concatinated video
+                            [self videoConcat:^(NSURL *concatVideoUrl) {
+                                // save the reference
+                                self.concatVideoURL = concatVideoUrl;
+                                
+                                // upload the video
+                                PFFile *concatVideoFile = [PFFile fileWithData:[NSData dataWithContentsOfURL:concatVideoUrl]];
+                                [concatVideoFile saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                                    if (succeeded) {
+                                        PFObject *concatVideo = [PFObject objectWithClassName:@"Video"];
+                                        concatVideo[@"videoFile"] = concatVideoFile;
+                                        [concatVideo saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                                            if (succeeded) {
+                                                dispatch_async(dispatch_get_main_queue(), ^{
+                                                    callbackBlock(video, concatVideo);
+                                                });
+                                            }
+                                        }];
+                                    }
+                                }];
+                                
                             }];
                             
-                        }];
-
+                        }
+                        else if (self.mode == RecordViewModeQuestion) {
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                callbackBlock(video, nil);
+                            });
+                        }
+                        
                     }
-                    else if (self.mode == RecordViewModeQuestion) {
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            callbackBlock(video, nil);
-                        });
-                    }
-                    
-                }
-            }];
-        }
-        else
+                }];
+            }
+            else
             [MBProgressHUD hideHUDForView:self.view animated:YES];
+        }];
     }];
+    
+
 }
 
 -(IBAction)playTap
@@ -335,7 +343,8 @@ typedef void (^VideosUploadedBooleanResultBlock)(PFObject *video, PFObject *conc
     theMovie.controlStyle = MPMovieControlStyleNone;
     theMovie.shouldAutoplay=NO;
     theMovie.scalingMode = MPMovieScalingModeAspectFit;
-    self.imageView.image = [theMovie thumbnailImageAtTime:0 timeOption:MPMovieTimeOptionExact];
+    self.thumbnailImg = [theMovie thumbnailImageAtTime:0 timeOption:MPMovieTimeOptionExact];
+    self.imageView.image = _thumbnailImg;
     self.videoUrl = [info objectForKey:@"UIImagePickerControllerMediaURL"];
     
     //for autoplay uncomment this and remove self.obscureView.hidden = YES;
