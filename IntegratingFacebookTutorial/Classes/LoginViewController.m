@@ -35,7 +35,7 @@
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        self.title = @"Facebook Profile";
+        self.title = @"Login to Video Q&A";
     }
     return self;
 }

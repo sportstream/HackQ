@@ -10,6 +10,6 @@
 #import "NotificationDelegate.h"
 #import "NotificationHelper.h"
 
-@interface ActivityViewController : PFQueryTableViewController <UINavigationControllerDelegate, NotificationDelegate>
+@interface ActivityViewController : PFQueryTableViewController <UINavigationControllerDelegate, NotificationDelegate, UIPageViewControllerDataSource>
 
 @end

@@ -11,18 +11,26 @@
 #import "AppDelegate.h"
 #import "NotificationHelper.h"
 #import "MBProgressHUD.h"
+#import "PFActivityObject.h"
 
 @interface HackVideoPlayer ()
 
 @property UIButton *playButton;
 @property UIButton *replyButton;
 @property UIButton *shareButton;
+@property UIImageView *thumbImageView;
 @property NSURL *currentVideoURL;
 @property MBProgressHUD *hud;
+@property NSData *videoData;
+@property PFFile *videoFile;
+//@property UIImage *thumbnailImg;
+@property BOOL hasAutoplayed;
 
 @end
 
 @implementation HackVideoPlayer
+
+@synthesize index;
 
 - (id)initWithData:(NSData *)data {
     if (self = [self initWithContentURL:[self getVideoURLWithData:data]]) {
@@ -34,69 +42,57 @@
 - (instancetype)initWithContentURL:(NSURL *)url {
     if (self = [super initWithContentURL:url]) {
         self.currentVideoURL = url;
-        
+        self.hasAutoplayed = NO;
         // register for notification
         [NotificationHelper registerForNotification:NotificationQuestionVideoURLUpdated WithDelegate:self];
     }
     return self;
 }
 
--(void)viewWillAppear:(BOOL)animated
+- (id)initWithObj:(PFActivityObject *)obj
 {
-    [super viewWillAppear:animated];
-    self.navigationController.navigationBar.barTintColor = [UIColor blackColor];
-    [(AppDelegate *)[[UIApplication sharedApplication] delegate] hideTabBar:self.tabBarController];
-    
-    // hide it by default until user finishes watching the video.
-    [self hideReplyButton];
-    [self hideShareButton];
-    
-    // react on any updates on currentVideoURL
-    MPMoviePlayerController *videoController = [self moviePlayer];
-    if (![self.currentVideoURL isEqual:[videoController contentURL]]) {
-        [videoController setContentURL:self.currentVideoURL];
-        [videoController prepareToPlay];
+    if (self = [super initWithContentURL:nil]) {
+        PFObject *videoObject = [obj isStitchedVideoAvailable]
+        ? [obj objectForKey:@"stitchedVideo"]
+        : [obj objectForKey:@"video"];
+        
+        PFFile *videoFile = [videoObject objectForKey:@"videoFile"];
+        self.videoFile = videoFile;
+        
+        if ([obj objectForKey:@"thumbnailFile"]) {
+            PFFile *thumbFile = [obj objectForKey:@"thumbnailFile"];
+            [thumbFile getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
+                self.thumbImageView.image = [UIImage imageWithData:data];
+            }];
+        }
+
+//        [videoFile getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
+//            if (error == nil) {
+//                self.videoData = data;
+//                self.currentVideoURL = [self getVideoURLWithData:self.videoData];
+//                // react on any updates on currentVideoURL
+//                MPMoviePlayerController *videoController = [self moviePlayer];
+//                if (![self.currentVideoURL isEqual:[videoController contentURL]]) {
+//                    [videoController setContentURL:self.currentVideoURL];
+//                    [videoController prepareToPlay];
+//                }
+//            }
+//        }];
     }
-}
-
--(void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    [self playAction:nil]; //autoplay 
-}
-
--(void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-    [(AppDelegate *)[[UIApplication sharedApplication] delegate] showTabBar:self.tabBarController];
-}
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-
-    self.playButton = [self createPlayButton];
-    self.replyButton = [self createReplyButton];
-    self.shareButton = [self createShareButton];
-    
-    [self.view addSubview:self.playButton];
-    [self.view addSubview:self.replyButton];
-    [self.view addSubview:self.shareButton];
-    
-    MPMoviePlayerController *videoController = [self moviePlayer];
-    videoController.fullscreen = YES;
-    videoController.shouldAutoplay = NO;
-    videoController.scalingMode = MPMovieScalingModeAspectFit;
-    videoController.controlStyle = MPMovieControlStyleNone;
+    return self;
 }
 
 - (NSURL *)getVideoURLWithData:(NSData *)data {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *appFile = [documentsDirectory stringByAppendingPathComponent:@"MyFile.mov"];
+    NSString *filename = [NSString stringWithFormat:@"myfile%.0f.mov",[[NSDate date] timeIntervalSince1970]];
+    NSString *appFile = [documentsDirectory stringByAppendingPathComponent:filename];
     [data writeToFile:appFile atomically:YES];
     //and then into NSURL.
     return [NSURL fileURLWithPath:appFile];
 }
+
+#pragma mark - create buttons
 
 - (UIButton *)createPlayButton {    // Method for creating button, with background image and other properties
     UIButton *playButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -128,6 +124,8 @@
     [shareButton addTarget:self action:@selector(shareAction:) forControlEvents:UIControlEventTouchUpInside];
     return shareButton;
 }
+
+#pragma mark - play/share actions
 
 - (void)shareAction:(id)sender {
     self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
@@ -172,7 +170,8 @@
     [self hidePlayButton];
     [self hideReplyButton];
     [self hideShareButton];
-    
+    self.thumbImageView.hidden = YES;
+
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(videoPlayBackDidFinish:)
                                                  name:MPMoviePlayerPlaybackDidFinishNotification
@@ -186,6 +185,7 @@
 - (void)videoPlayBackDidFinish:(NSNotification *)notification
 {
     [self showPlayButton];
+    self.hasAutoplayed = YES;
     
     if ([self.activityItem canVideoBeShared])
         [self showShareButton];
@@ -206,6 +206,8 @@
     if (url)
         self.currentVideoURL = url;
 }
+
+#pragma mark - show/hide buttons
 
 - (void)showPlayButton {
     [self.playButton setHidden:NO];
@@ -229,6 +231,90 @@
 
 - (void)hideShareButton {
     [self.shareButton setHidden:YES];
+}
+
+#pragma mark - view delegates
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    _thumbImageView = [[UIImageView alloc] initWithFrame:self.view.frame];
+    self.thumbImageView.contentMode = UIViewContentModeScaleAspectFit;
+    [self.view addSubview:_thumbImageView];
+    
+    self.playButton = [self createPlayButton];
+    self.replyButton = [self createReplyButton];
+    self.shareButton = [self createShareButton];
+    
+    [self.view addSubview:self.playButton];
+    [self.view addSubview:self.replyButton];
+    [self.view addSubview:self.shareButton];
+    
+    MPMoviePlayerController *videoController = [self moviePlayer];
+    videoController.fullscreen = YES;
+    videoController.shouldAutoplay = NO;
+    videoController.scalingMode = MPMovieScalingModeAspectFit;
+    videoController.controlStyle = MPMovieControlStyleNone;
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    //    self.navigationController.navigationBar.barTintColor = [UIColor blackColor];
+    //    [(AppDelegate *)[[UIApplication sharedApplication] delegate] hideTabBar:self.tabBarController];
+    
+    // hide it by default until user finishes watching the video.
+    [self hideReplyButton];
+    [self hideShareButton];
+    
+    if (self.currentVideoURL) {
+        // react on any updates on currentVideoURL
+        MPMoviePlayerController *videoController = [self moviePlayer];
+        if (![self.currentVideoURL isEqual:[videoController contentURL]]) {
+            [videoController setContentURL:self.currentVideoURL];
+            [videoController prepareToPlay];
+        }
+    }
+    else if (self.videoFile)
+    {
+        [self.videoFile getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
+            if (error == nil) {
+                self.videoData = data;
+                self.currentVideoURL = [self getVideoURLWithData:self.videoData];
+                // react on any updates on currentVideoURL
+                MPMoviePlayerController *videoController = [self moviePlayer];
+                if (![self.currentVideoURL isEqual:[videoController contentURL]]) {
+                    [videoController setContentURL:self.currentVideoURL];
+                    [videoController prepareToPlay];
+                }
+                
+                if (self.isViewLoaded && self.view.window) {
+                    [self playAction:nil];
+                }
+            }
+        }];
+    }
+}
+
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    if (self.currentVideoURL && !self.hasAutoplayed) {
+        [self playAction:nil];
+    }
+    else {
+        self.thumbImageView.hidden = NO;
+        [self showPlayButton];
+    }
+}
+
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:MPMoviePlayerPlaybackDidFinishNotification object:nil];
+    [self.moviePlayer stop];
+    self.thumbImageView.hidden = NO;
+    self.hasAutoplayed = YES;
 }
 
 @end

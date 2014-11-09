@@ -13,7 +13,9 @@
 @interface HackVideoPlayer : MPMoviePlayerViewController <NotificationDelegate>
 
 @property (nonatomic, retain) PFActivityObject *activityItem;
+@property (nonatomic, assign) NSUInteger index;
 
+- (id)initWithObj:(PFActivityObject *)obj;
 - (id)initWithData:(NSData *)data;
 - (instancetype)initWithContentURL:(NSURL *)url;
 
