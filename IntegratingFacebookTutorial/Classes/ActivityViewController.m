@@ -100,12 +100,12 @@
     if ([objectType isEqualToString:@"question"])
     {
         if (object[@"replied"] == [NSNumber numberWithBool:YES])
-            cell.imageView.image = [UIImage imageNamed:@"repliedIcon"];
+            cell.imageView.image = [UIImage imageNamed:@"flatReplyIcon"];
         else
-            cell.imageView.image = [UIImage imageNamed:@"questionIcon"];
+            cell.imageView.image = [UIImage imageNamed:@"questionIconFlat"];
     }
     else if ([objectType isEqualToString:@"answer"])
-        cell.imageView.image = [UIImage imageNamed:@"answerIcon"];
+        cell.imageView.image = [UIImage imageNamed:@"answerIconFlat"];
     
     NSString *titleString = [NSString stringWithFormat:@"From %@", object[@"fromUser"][@"fullname"]];
     

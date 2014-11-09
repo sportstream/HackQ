@@ -30,7 +30,8 @@
     UINavigationController *firstNavigationController = [[UINavigationController alloc]
                                                      initWithRootViewController:fvc];
     fvc.title=@"Inbox";
-    fvc.tabBarItem.image=[UIImage imageNamed:@"bubbleIcon.png"];
+//    fvc.tabBarItem.image=[UIImage imageNamed:@"bubbleIcon.png"];
+    fvc.tabBarItem.image=[UIImage imageNamed:@"message_group-50.png"];
     
     //SecondViewController
     UserTableViewController *svc = [[UserTableViewController alloc] init];
@@ -38,7 +39,8 @@
     UINavigationController *secondNavigationController = [[UINavigationController alloc]
                             initWithRootViewController:svc];
     svc.title=@"Ask a Question";
-    svc.tabBarItem.image=[UIImage imageNamed:@"questionMarkIcon.png"];
+//    svc.tabBarItem.image=[UIImage imageNamed:@"questionMarkIcon.png"];
+    svc.tabBarItem.image=[UIImage imageNamed:@"ask_question-50.png"];
     
     self.tab.viewControllers=[NSArray arrayWithObjects:firstNavigationController, secondNavigationController, nil];
     

@@ -13,7 +13,7 @@
 #import "MBProgressHUD.h"
 #import "PFActivityObject.h"
 
-@interface HackVideoPlayer ()
+@interface HackVideoPlayer () <MBProgressHUDDelegate>
 
 @property UIButton *playButton;
 @property UIButton *replyButton;
@@ -131,6 +131,7 @@
     self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     [self.hud setLabelText:@"Uploading"];
     [self.hud setDimBackground:YES];
+    [self.hud showWhileExecuting:@selector(myProgressTask) onTarget:self withObject:nil animated:YES];
     [(AppDelegate *)[[UIApplication sharedApplication] delegate] postVideoToFacebook:[NSData dataWithContentsOfURL:self.currentVideoURL] withCallback:^(BOOL succeed) {
         if (succeed) {
             [self.hud setLabelText:@"Shared!"];
@@ -277,7 +278,16 @@
     }
     else if (self.videoFile)
     {
+        self.hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        self.hud.mode = MBProgressHUDModeAnnularDeterminate;
+
+        [self.hud setLabelText:@"Loading..."];
+        [self.hud setDimBackground:YES];
+//        self.hud.mode = MBProgressHUDModeDeterminateHorizontalBar;
+        self.hud.delegate = self;
+        
         [self.videoFile getDataInBackgroundWithBlock:^(NSData *data, NSError *error) {
+            [self.hud hide:YES afterDelay:0];
             if (error == nil) {
                 self.videoData = data;
                 self.currentVideoURL = [self getVideoURLWithData:self.videoData];
@@ -292,6 +302,8 @@
                     [self playAction:nil];
                 }
             }
+        } progressBlock:^(int percentDone) {
+            self.hud.progress = (float)percentDone/100.0f;
         }];
     }
 }
